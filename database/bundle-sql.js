@@ -25,4 +25,4 @@ order.forEach((filePath, index) => {
 	resultContents += `${fileContents}${index === 0 ? '' : ';'}\n\n`;
 });
 
-fs.writeFileSync('./bundle.sql', resultContents);
+fs.writeFileSync(`${__dirname}/bundle.sql`, resultContents);
