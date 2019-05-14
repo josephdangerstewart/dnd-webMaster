@@ -119,17 +119,19 @@ export const getToolSettings = async (path, query, user, connection) => {
 		connection,
 		`
 			SELECT
-				settingData->:tool AS toolSettings
+				settingData
 			FROM
 				campaign
 			WHERE
 				campaignID = :campaignID
 		`,
-		{ campaignID, tool: `$.${tool}` }
+		{ campaignID }
 	);
 
-	if (result[0].toolSettings) {
-		return JSON.parse(result[0].toolSettings);
+	const allToolResults = JSON.parse(result[0].settingData);
+
+	if (allToolResults[tool]) {
+		return allToolResults[tool];
 	} else {
 		return {};
 	}
@@ -142,21 +144,31 @@ export const updateToolSettings = async (path, query, user, connection, body) =>
 	const { campaignID, tool } = path;
 	const { value } = body;
 
+	const settingDataResults = await promiseQuery(
+		connection,
+		`
+			SELECT settingData
+			FROM campaign
+			WHERE campaignID = :campaignID
+		`,
+		{ campaignID }
+	);
+
+	const settingData = JSON.parse(settingDataResults[0].settingData);
+
+	settingData[tool] = value;
+
 	const result = await promiseQuery(
 		connection,
 		`
 			UPDATE
 				campaign
 			SET
-				settingData = JSON_SET(
-					settingData,
-					:tool,
-					JSON_MERGE(:value, '{}')
-				)
+				settingData = :settingData
 			WHERE
 				campaignID = :campaignID
 		`,
-		{ campaignID, tool: `$.${tool}`, value: JSON.stringify(value) }
+		{ campaignID, settingData: JSON.stringify(settingData) }
 	);
 
 	return {

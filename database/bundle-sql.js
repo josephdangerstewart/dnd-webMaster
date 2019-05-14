@@ -25,4 +25,15 @@ order.forEach((filePath, index) => {
 	resultContents += `${fileContents}${index === 0 ? '' : ';'}\n\n`;
 });
 
-fs.writeFileSync('./bundle.sql', resultContents);
+fs.writeFileSync(`${__dirname}/bundle.sql`, resultContents);
+
+const testDatabaseScript = resultContents.replace(/dungeonbuddiesdb/gi, 'dndcampa_test').replace(
+	/CREATE TABLE IF NOT EXISTS `dndcampa_test`\.`(.+)`/gi,
+	(text, tableName) => `CREATE TABLE IF NOT EXISTS \`dndcampa_test\`.\`${tableName.toLowerCase()}\``
+);
+
+fs.writeFileSync(`${__dirname}/test.bundle.sql`, testDatabaseScript);
+
+const prodDatabaseScript = testDatabaseScript.replace(/dndcampa_test/gi, 'dndcampa_prod');
+
+fs.writeFileSync(`${__dirname}/prod.bundle.sql`, prodDatabaseScript);
