@@ -137,7 +137,7 @@ export const globalSearch = async (path, queryString, user, connection) => {
 				spellID AS id,
 				'spell' AS type
 			FROM spell
-			WHERE spellName LIKE :query
+			WHERE spellName LIKE :query OR spellDesc LIKE :query
 			${countSegment}
 		`,
 		variables
@@ -163,11 +163,11 @@ export const globalSearch = async (path, queryString, user, connection) => {
 		connection,
 		`
 			SELECT
-				klassName AS name,
-				klassID AS id,
-				'klass' AS type
-			FROM klass
-			WHERE klassName LIKE :query
+				featName AS name,
+				featID AS id,
+				'feat' AS type
+			FROM feat
+			WHERE featName LIKE :query
 			${countSegment}
 		`,
 		variables
