@@ -3,7 +3,7 @@ import LayoutRow from './LayoutRow';
 import LayoutPanel from './LayoutPanel';
 import LayoutPane from './LayoutPane';
 
-export const addPane = (layout, type) => {
+export const addPane = (layout, type, state) => {
 	const jsonModel = layout.toJson({});
 	let newModel = {};
 	if (jsonModel.rows.length > 1) {
@@ -11,7 +11,7 @@ export const addPane = (layout, type) => {
 			{ panels: [
 				jsonModel,
 				{ panes: [
-					{ type },
+					{ type, state },
 				] },
 			] },
 		] };
@@ -20,7 +20,7 @@ export const addPane = (layout, type) => {
 			{ panels: [
 				...jsonModel.rows[0].panels,
 				{ panes: [
-					{ type },
+					{ type, state },
 				] },
 			] },
 		] };
@@ -28,7 +28,7 @@ export const addPane = (layout, type) => {
 		newModel = { rows: [
 			{ panels: [
 				{ panes: [
-					{ type },
+					{ type, state },
 				] },
 			] },
 		] };

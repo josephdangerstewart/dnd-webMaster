@@ -18,6 +18,7 @@ import PanelGroup from './PanelGroup';
 import ContentPanel from './ContentPanel';
 import CustomDragLayer from './CustomDragLayer';
 import Toolbar from './toolbar';
+import GlobalSearchBar from './global-search';
 
 import styles from './styles.less';
 
@@ -40,7 +41,7 @@ export default class Grid extends React.Component {
 	state = {
 		layout: new Layout(defaultLayout),
 		reloading: false,
-		currentCampaignID: 0,
+		currentCampaignID: '0',
 		campaignTitle: '',
 		savedLayouts: [],
 		validating: true,
@@ -187,9 +188,9 @@ export default class Grid extends React.Component {
 			});
 	}
 
-	addPane = type => {
+	addPane = (type, state) => {
 		const { layout } = this.state;
-		this.setLayout(addPane(layout, type));
+		this.setLayout(addPane(layout, type, state));
 	}
 
 	insertPaneIntoPanel = (paneObject, target) => {
@@ -274,6 +275,10 @@ export default class Grid extends React.Component {
 							</div>
 					}
 				</div>
+				<GlobalSearchBar
+					campaignID={currentCampaignID}
+					addTool={this.addPane}
+				/>
 				<CustomDragLayer />
 			</div>
 		);
