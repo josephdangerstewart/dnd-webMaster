@@ -3,6 +3,7 @@ import {
 } from '../utility';
 
 import * as searchController from './SearchController';
+import { userCanAccessCampaign } from '../campaigns/CampaignsController';
 
 export default app => {
 	app.route('/api/search/spells')
@@ -85,4 +86,13 @@ export default app => {
 			}),
 			true
 		));
+	
+	app.route('/api/search/global/:campaignID')
+		.get(
+			userCanAccessCampaign,
+			asRouteFunction(
+				searchController.globalSearch,
+				true
+			)
+		);
 };

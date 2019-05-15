@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import 'babel-polyfill';
+import './polyfill';
 import express from 'express';
 import path from 'path';
 import configureAuthentication from './authentication';

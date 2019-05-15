@@ -3,7 +3,7 @@ import LayoutRow from './LayoutRow';
 import LayoutPanel from './LayoutPanel';
 import LayoutPane from './LayoutPane';
 
-export const addPane = (layout, type) => {
+export const addPane = (layout, type, state) => {
 	const jsonModel = layout.toJson({});
 	let newModel = {};
 	if (jsonModel.rows.length > 1) {
@@ -11,7 +11,7 @@ export const addPane = (layout, type) => {
 			{ panels: [
 				jsonModel,
 				{ panes: [
-					{ type },
+					{ type, state },
 				] },
 			] },
 		] };
@@ -20,7 +20,7 @@ export const addPane = (layout, type) => {
 			{ panels: [
 				...jsonModel.rows[0].panels,
 				{ panes: [
-					{ type },
+					{ type, state },
 				] },
 			] },
 		] };
@@ -28,12 +28,42 @@ export const addPane = (layout, type) => {
 		newModel = { rows: [
 			{ panels: [
 				{ panes: [
-					{ type },
+					{ type, state },
 				] },
 			] },
 		] };
 	}
 	return new Layout(newModel);
+};
+
+export const insertIntoFirstPanel = (layout, type, state) => {
+	if (layout.getRows().length > 0) {
+		const row = layout.getRows()[0];
+		const panel = row.getPanels()[0];
+		if (panel instanceof Layout) {
+			insertIntoFirstPanel(panel, type, state);
+		} else {
+			const pane = new LayoutPane(
+				{
+					type,
+					state,
+				}
+			);
+			panel.addPane(pane);
+			panel.focusPane(pane);
+		}
+	} else {
+		layout.addRow(new LayoutRow(
+			{
+				panels: [
+					{ panes: [
+						{ type, state },
+					] },
+				],
+			}
+		));
+	}
+	return layout;
 };
 
 export const insertPaneIntoPanel = (object, target) => {

@@ -1,0 +1,25 @@
+@import '../../../styles/colors.less';
+
+.menu-item {
+	color: @text-color !important;
+
+	&.active {
+		background-color: @primary-color !important;
+		color: @background-color !important;
+	}
+
+	&.active:hover {
+		background-color: @primary-color !important;
+	}
+
+	.item-type {
+		font-size: 12px;
+		font-weight: bold;
+		margin: 0;
+	}
+
+	.item-name {
+		font-size: 16px;
+		margin: 0;
+	}
+}

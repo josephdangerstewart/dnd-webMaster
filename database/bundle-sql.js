@@ -14,6 +14,7 @@ const order = [
 	'generate-scripts/output/insert-spell.sql',
 	'generate-scripts/output/insert-spellklasslist.sql',
 	'generate-scripts/output/insert-weaponproperty.sql',
+	'plugins/levenshtein.sql',
 ];
 
 const fs = require('fs');

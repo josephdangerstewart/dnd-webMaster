@@ -19,6 +19,18 @@ export default class NotesTool extends ToolBase {
 		savingNote: false,
 	}
 
+	componentDidUpdate = () => {
+		const { defaultNoteID } = this.state;
+
+		if (defaultNoteID || defaultNoteID === 0) {
+			this.setState({
+				noteID: defaultNoteID,
+				defaultFolderID: null,
+				defaultNoteID: null,
+			}, this.loadNote);
+		}
+	}
+
 	loadNote = async () => {
 		try {
 			const { campaignID } = this.props;
@@ -96,10 +108,16 @@ export default class NotesTool extends ToolBase {
 			this.loadNote
 		);
 	}
+
+	clearDefaultFolderID = callback => {
+		this.setState({
+			defaultFolderID: null,
+		}, callback);
+	}
 	
 	render() {
 		const { campaignID, insertPaneIntoPanel } = this.props;
-		const { view, note, savingNote } = this.state;
+		const { view, note, savingNote, defaultFolderID } = this.state;
 
 		if (view === 'editor') {
 			return (
@@ -118,6 +136,8 @@ export default class NotesTool extends ToolBase {
 			<NotesList
 				campaignID={campaignID}
 				openNote={this.openNote}
+				defaultFolderID={defaultFolderID}
+				clearDefaultFolderID={this.clearDefaultFolderID}
 			/>
 		);
 	}

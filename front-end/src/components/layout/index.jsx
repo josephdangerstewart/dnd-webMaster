@@ -18,10 +18,16 @@ import PanelGroup from './PanelGroup';
 import ContentPanel from './ContentPanel';
 import CustomDragLayer from './CustomDragLayer';
 import Toolbar from './toolbar';
+import GlobalSearchBar from './global-search';
 
 import styles from './styles.less';
 
-import { addPane, movePane, insertPaneIntoPanel } from './model/layout-manager';
+import {
+	addPane,
+	movePane,
+	insertPaneIntoPanel,
+	insertIntoFirstPanel,
+} from './model/layout-manager';
 import { get } from 'Utility/fetch';
 
 import Layout from './model/Layout';
@@ -40,7 +46,7 @@ export default class Grid extends React.Component {
 	state = {
 		layout: new Layout(defaultLayout),
 		reloading: false,
-		currentCampaignID: 0,
+		currentCampaignID: '0',
 		campaignTitle: '',
 		savedLayouts: [],
 		validating: true,
@@ -187,14 +193,20 @@ export default class Grid extends React.Component {
 			});
 	}
 
-	addPane = type => {
+	addPane = (type, state) => {
 		const { layout } = this.state;
-		this.setLayout(addPane(layout, type));
+		this.setLayout(addPane(layout, type, state));
 	}
 
 	insertPaneIntoPanel = (paneObject, target) => {
 		insertPaneIntoPanel(paneObject, target);
 		this.setLayout(this.state.layout);
+	}
+
+	insertIntoFirstPanel = (type, state) => {
+		this.setState(({ layout }) => ({
+			layout: insertIntoFirstPanel(layout, type, state),
+		}));
 	}
 
 	loadLayout = layoutData => {
@@ -274,6 +286,10 @@ export default class Grid extends React.Component {
 							</div>
 					}
 				</div>
+				<GlobalSearchBar
+					campaignID={currentCampaignID}
+					addTool={this.insertIntoFirstPanel}
+				/>
 				<CustomDragLayer />
 			</div>
 		);

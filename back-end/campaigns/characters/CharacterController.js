@@ -50,13 +50,13 @@ export const getAllCharacters = async (path, query, user, connection) => {
 		connection,
 		`
 			SELECT
-				dungeonbuddiesdb.character.characterID,
-				dungeonbuddiesdb.character.characterName,
-				dungeonbuddiesdb.character.isNPC
+				\`character\`.characterID,
+				\`character\`.characterName,
+				\`character\`.isNPC
 			FROM 
 				characterlist
 					JOIN
-				dungeonbuddiesdb.character ON dungeonbuddiesdb.character.characterID = characterlist.characterID
+				\`character\` ON \`character\`.characterID = characterlist.characterID
 			WHERE 
 				characterlist.campaignID = :campaignID
 		`,
@@ -76,7 +76,7 @@ export const createNewCharacter = async (path, query, user, connection, body) =>
 	const results = await promiseQuery(
 		connection,
 		`
-			INSERT INTO dungeonbuddiesdb.character
+			INSERT INTO \`character\`
 			(characterName, klassID, raceID, hp, height, weight, age, skinDesc, hairDesc, isNPC, maxHP, ac)
 			VALUES
 			(:characterName, 1, 1, 0, "", 0, 0, "", "", :isNPC, 10, ac)
@@ -209,7 +209,7 @@ export const updateCharacter = async (path, query, user, connection, body) => {
 		await promiseQuery(
 			connection,
 			`
-				UPDATE dungeonbuddiesdb.character
+				UPDATE \`character\`
 				SET :(field) = :value
 				WHERE characterID = :characterID
 			`,

@@ -23,6 +23,8 @@ export default class NotesList extends React.Component {
 	static propTypes = {
 		campaignID: PropTypes.number.isRequired,
 		openNote: PropTypes.func.isRequired,
+		clearDefaultFolderID: PropTypes.func.isRequired,
+		defaultFolderID: PropTypes.number,
 	}
 
 	state = {
@@ -39,6 +41,18 @@ export default class NotesList extends React.Component {
 
 	componentDidMount() {
 		this.loadNotes();
+	}
+
+	componentDidUpdate() {
+		const { defaultFolderID, clearDefaultFolderID } = this.props;
+
+		if (defaultFolderID || defaultFolderID === 0) {
+			clearDefaultFolderID(() => {
+				this.setState({
+					folderID: defaultFolderID,
+				}, this.loadNotes);
+			});
+		}
 	}
 
 	loadNotes = async () => {
