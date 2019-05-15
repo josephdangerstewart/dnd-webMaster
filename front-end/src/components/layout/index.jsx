@@ -22,7 +22,12 @@ import GlobalSearchBar from './global-search';
 
 import styles from './styles.less';
 
-import { addPane, movePane, insertPaneIntoPanel } from './model/layout-manager';
+import {
+	addPane,
+	movePane,
+	insertPaneIntoPanel,
+	insertIntoFirstPanel,
+} from './model/layout-manager';
 import { get } from 'Utility/fetch';
 
 import Layout from './model/Layout';
@@ -198,6 +203,12 @@ export default class Grid extends React.Component {
 		this.setLayout(this.state.layout);
 	}
 
+	insertIntoFirstPanel = (type, state) => {
+		this.setState(({ layout }) => ({
+			layout: insertIntoFirstPanel(layout, type, state),
+		}));
+	}
+
 	loadLayout = layoutData => {
 		this.setState(() => {
 
@@ -277,7 +288,7 @@ export default class Grid extends React.Component {
 				</div>
 				<GlobalSearchBar
 					campaignID={currentCampaignID}
-					addTool={this.addPane}
+					addTool={this.insertIntoFirstPanel}
 				/>
 				<CustomDragLayer />
 			</div>

@@ -36,6 +36,36 @@ export const addPane = (layout, type, state) => {
 	return new Layout(newModel);
 };
 
+export const insertIntoFirstPanel = (layout, type, state) => {
+	if (layout.getRows().length > 0) {
+		const row = layout.getRows()[0];
+		const panel = row.getPanels()[0];
+		if (panel instanceof Layout) {
+			insertIntoFirstPanel(panel, type, state);
+		} else {
+			const pane = new LayoutPane(
+				{
+					type,
+					state,
+				}
+			);
+			panel.addPane(pane);
+			panel.focusPane(pane);
+		}
+	} else {
+		layout.addRow(new LayoutRow(
+			{
+				panels: [
+					{ panes: [
+						{ type, state },
+					] },
+				],
+			}
+		));
+	}
+	return layout;
+};
+
 export const insertPaneIntoPanel = (object, target) => {
 	target.addPane(new LayoutPane(object));
 };
