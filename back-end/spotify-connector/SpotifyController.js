@@ -11,8 +11,17 @@ import clientInfo from './spotify-api-creds.json';
 
 const SPOTIFY_URL = 'https://api.spotify.com/v1';
 const ACCOUNTS_SPOTIFY_URL = 'https://accounts.spotify.com';
-const REDIRECT_URL = 'http://localhost:8085/api/spotify/callback';
 const CRYPTR_KEY = process.env.CRYPTR_KEY || 'solascriptura';
+
+let REDIRECT_URL = 'http://localhost:8085/api/spotify/callback';
+switch (process.env.SERVER_TYPE) {
+case 'test':
+	REDIRECT_URL = 'http://dnd.josephdangerstewart.com/api/spotify/callback';
+	break;
+case 'prod':
+	REDIRECT_URL = 'http://app.dndcampaignbuddy.com/api/spotify/callback';
+	break;
+}
 
 const cryptr = new Cryptr(CRYPTR_KEY);
 
