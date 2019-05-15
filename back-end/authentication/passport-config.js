@@ -23,6 +23,16 @@ const Strategy = process.env.NODE_ENV === 'test' ? MockStrategy : GoogleStrategy
 const name =  process.env.NODE_ENV === 'test' ? 'google' : undefined;
 const user = process.env.NODE_ENV === 'test' ? testUser : undefined;
 
+let callbackURL = 'http://localhost:8085/api/auth/login/callback';
+switch (process.env.SERVER_TYPE) {
+case 'test':
+	callbackURL = 'http://test.app.campaignbuddy.com/api/auth/login/callback';
+	break;
+case 'prod':
+	callbackURL = 'http://app.campaignbuddy.com/api/auth/login/callback';
+	break;
+}
+
 export default passport => {
 
 	passport.serializeUser((user, done) => done(null, user));
@@ -31,7 +41,7 @@ export default passport => {
 	passport.use(new Strategy({
 		clientID: googleConfig.web.client_id,
 		clientSecret: googleConfig.web.client_secret,
-		callbackURL: 'http://localhost:8085/api/auth/login/callback',
+		callbackURL,
 		name,
 		user,
 	},
@@ -101,6 +111,7 @@ export default passport => {
 
 			done(null, new User(profile.displayName, profile.emails[0].value, user));
 		} catch (err) {
+			// eslint-disable-next-line
 			console.log(err);
 			return done(err, false);
 		}
