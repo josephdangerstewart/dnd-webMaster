@@ -26,7 +26,7 @@ const user = process.env.NODE_ENV === 'test' ? testUser : undefined;
 let callbackURL = 'http://localhost:8085/api/auth/login/callback';
 switch (process.env.SERVER_TYPE) {
 case 'test':
-	callbackURL = 'http://test.app.campaignbuddy.com/api/auth/login/callback';
+	callbackURL = 'http://dnd.josephdangerstewart.com/api/auth/login/callback';
 	break;
 case 'prod':
 	callbackURL = 'http://app.campaignbuddy.com/api/auth/login/callback';
