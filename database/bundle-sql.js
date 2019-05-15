@@ -29,8 +29,8 @@ order.forEach((filePath, index) => {
 fs.writeFileSync(`${__dirname}/bundle.sql`, resultContents);
 
 const testDatabaseScript = resultContents.replace(/dungeonbuddiesdb/gi, 'dndcampa_test').replace(
-	/CREATE TABLE IF NOT EXISTS `dndcampa_test`\.`(.+)`/gi,
-	(text, tableName) => `CREATE TABLE IF NOT EXISTS \`dndcampa_test\`.\`${tableName.toLowerCase()}\``
+	/`dndcampa_test`.`([A-Z][^`]+)`/gi,
+	(text, tableName) => `\`dndcampa_test\`.\`${tableName.toLowerCase()}\``
 );
 
 fs.writeFileSync(`${__dirname}/test.bundle.sql`, testDatabaseScript);

@@ -6,3 +6,4 @@ server.bundle.js
 bundle.sql
 *.bundle.sql
 coverage/
+database-credentials.json

@@ -15,6 +15,8 @@ try {
 	databaseCredentials = {
 		user: 'root',
 		pass: '',
+		host: 'localhost',
+		schema: 'dungeonbuddiesdb',
 	};
 }
 
@@ -63,8 +65,8 @@ function queryFormat(query, values) {
 const pool = mysql.createPool({
 	user: databaseCredentials.user,
 	password: databaseCredentials.pass,
-	host: 'localhost',
-	database: 'dungeonbuddiesdb',
+	host: databaseCredentials.host,
+	database: databaseCredentials.schema,
 	typeCast,
 	queryFormat,
 });
