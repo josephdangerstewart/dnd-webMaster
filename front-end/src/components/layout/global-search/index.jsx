@@ -83,6 +83,31 @@ export default class GlobalSearchBar extends React.Component {
 			return addTool('search', { type: `${type}s`, resourceID: id });
 		case 'equipment':
 			return addTool('search', { type, resourceID: id });
+		case 'character':
+			return addTool(
+				'character',
+				{
+					defaultCharacterID: id,
+					view: 'display',
+					toolSettings: {
+						orderings: [],
+					},
+				}
+			);
+		case 'note':
+			return addTool(
+				'notes',
+				{
+					defaultNoteID: id,
+				}
+			);
+		case 'folder':
+			return addTool(
+				'notes',
+				{
+					defaultFolderID: id,
+				}
+			);
 		}
 	}
 
