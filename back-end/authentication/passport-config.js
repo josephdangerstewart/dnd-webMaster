@@ -29,7 +29,7 @@ case 'test':
 	callbackURL = 'http://dnd.josephdangerstewart.com/api/auth/login/callback';
 	break;
 case 'prod':
-	callbackURL = 'http://app.campaignbuddy.com/api/auth/login/callback';
+	callbackURL = 'http://app.dndcampaignbuddy.com/api/auth/login/callback';
 	break;
 }
 
