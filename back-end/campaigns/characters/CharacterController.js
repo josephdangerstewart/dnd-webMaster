@@ -23,7 +23,7 @@ export const characterBelongsToCampaign = async (request, response, next) => {
 			connection,
 			`
 				SELECT COUNT(*) as count FROM characterlist
-				WHERE characterID = :characterID AND campaignID = :campaignID
+				WHERE characterID = :characterID AND campaignID = :campaignID AND NOT isDeleted = 1
 			`,
 			{ campaignID, characterID }
 		);
@@ -59,6 +59,8 @@ export const getAllCharacters = async (path, query, user, connection) => {
 				\`character\` ON \`character\`.characterID = characterlist.characterID
 			WHERE 
 				characterlist.campaignID = :campaignID
+				AND
+				NOT isDeleted = 1
 		`,
 		{ campaignID }
 	);
@@ -122,7 +124,7 @@ export const getCharacter = async (path, query, user, connection) => {
 				klass ON \`character\`.klassID = klass.klassID
 					JOIN
 				race ON \`character\`.raceID = race.raceID
-			WHERE characterID = :characterID
+			WHERE characterID = :characterID AND NOT isDeleted = 1
 		`,
 		{ characterID },
 	))[0];
@@ -211,7 +213,7 @@ export const updateCharacter = async (path, query, user, connection, body) => {
 			`
 				UPDATE \`character\`
 				SET :(field) = :value
-				WHERE characterID = :characterID
+				WHERE characterID = :characterID AND NOT isDeleted = 1
 			`,
 			{ characterID, value, field }
 		);
