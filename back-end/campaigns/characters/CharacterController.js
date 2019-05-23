@@ -103,6 +103,27 @@ export const createNewCharacter = async (path, query, user, connection, body) =>
 };
 
 /**
+ * @description Sets the isDeleted bit on a character to 1
+ */
+export const deleteCharacter = async (path, query, user, connection) => {
+	const { characterID } = path;
+
+	const results = await promiseQuery(
+		connection,
+		`
+			UPDATE \`character\`
+			SET isDeleted = 1
+			WHERE characterID = :characterID
+		`,
+		{ characterID }
+	);
+
+	return {
+		deleted: results.affectedRows > 0,
+	};
+};
+
+/**
  * @description Get data for a specific character
  */
 export const getCharacter = async (path, query, user, connection) => {
