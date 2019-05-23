@@ -15,6 +15,7 @@ const order = [
 	'generate-scripts/output/insert-spellklasslist.sql',
 	'generate-scripts/output/insert-weaponproperty.sql',
 	'plugins/levenshtein.sql',
+	'change-scripts/add-character-is-deleted-bit.sql',
 ];
 
 const fs = require('fs');
