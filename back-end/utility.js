@@ -138,6 +138,11 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 		if (withDBConnection) {
 			connection.release();
 		}
+
+		if (results instanceof ServerError) {
+			return response.status(results.type).json({ error: response.message });
+		}
+
 		return response.json(results || {});
 	} catch (err) {
 		// eslint-disable-next-line
@@ -149,3 +154,19 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 		return serverError(response, err);
 	}
 };
+
+
+/*
+ * A custom error class for quietly throwing errors
+ */
+export class ServerError extends Error {
+	type = 0;
+
+	constructor(type, message) {
+		super(message);
+		this.type = type;
+	}
+}
+
+// Export the error codes
+export const ERROR_CODES = STATUS_CODES;

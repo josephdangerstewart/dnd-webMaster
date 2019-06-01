@@ -2,6 +2,9 @@ import {
 	promiseQuery,
 	getSQLConnection,
 	unauthorizedError,
+	serverError,
+	ServerError,
+	ERROR_CODES,
 } from '../../utility';
 
 import * as spellsController from './CharacterSpellsController';
@@ -37,6 +40,7 @@ export const characterBelongsToCampaign = async (request, response, next) => {
 		}
 	} catch (err) {
 		connection.release();
+		return serverError(response, err);
 	}
 };
 
@@ -59,6 +63,8 @@ export const getAllCharacters = async (path, query, user, connection) => {
 				\`character\` ON \`character\`.characterID = characterlist.characterID
 			WHERE 
 				characterlist.campaignID = :campaignID
+				AND
+				NOT isDeleted = 1
 		`,
 		{ campaignID }
 	);
@@ -101,6 +107,27 @@ export const createNewCharacter = async (path, query, user, connection, body) =>
 };
 
 /**
+ * @description Sets the isDeleted bit on a character to 1
+ */
+export const deleteCharacter = async (path, query, user, connection) => {
+	const { characterID } = path;
+
+	const results = await promiseQuery(
+		connection,
+		`
+			UPDATE \`character\`
+			SET isDeleted = 1
+			WHERE characterID = :characterID
+		`,
+		{ characterID }
+	);
+
+	return {
+		deleted: results.affectedRows > 0,
+	};
+};
+
+/**
  * @description Get data for a specific character
  */
 export const getCharacter = async (path, query, user, connection) => {
@@ -122,10 +149,14 @@ export const getCharacter = async (path, query, user, connection) => {
 				klass ON \`character\`.klassID = klass.klassID
 					JOIN
 				race ON \`character\`.raceID = race.raceID
-			WHERE characterID = :characterID
+			WHERE characterID = :characterID AND NOT isDeleted = 1
 		`,
 		{ characterID },
 	))[0];
+
+	if (!character) {
+		return new ServerError(ERROR_CODES.NOT_FOUND, 'Character not found');
+	}
 
 	const spellsPromise = spellsController.getSpellsForCharacter(characterID, connection);
 	const proficienciesPromise = proficienciesController.getProficienciesForCharacter(characterID, connection);
@@ -211,7 +242,7 @@ export const updateCharacter = async (path, query, user, connection, body) => {
 			`
 				UPDATE \`character\`
 				SET :(field) = :value
-				WHERE characterID = :characterID
+				WHERE characterID = :characterID AND NOT isDeleted = 1
 			`,
 			{ characterID, value, field }
 		);

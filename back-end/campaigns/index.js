@@ -37,6 +37,13 @@ export default app => {
 			characterRoutes.characterBelongsToCampaign,
 			asRouteFunction(characterRoutes.getCharacter, true)
 		);
+	
+	app.route('/api/campaigns/:campaignID/characters/:characterID')
+		.delete(
+			campaignRoutes.userCanAccessCampaign,
+			characterRoutes.characterBelongsToCampaign,
+			asRouteFunction(characterRoutes.deleteCharacter, true)
+		);
 
 	app.route('/api/campaigns/:campaignID/characters/:characterID')
 		.post(

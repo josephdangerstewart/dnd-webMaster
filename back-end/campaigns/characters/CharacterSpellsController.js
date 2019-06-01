@@ -11,7 +11,7 @@ export const getSpellsForCharacter = (characterID, connection) => promiseQuery(
 		SELECT
 			spell.spellID,
 			spellName,
-			1 as level
+			spellLevel as level
 		FROM
 			spelllist
 				JOIN
