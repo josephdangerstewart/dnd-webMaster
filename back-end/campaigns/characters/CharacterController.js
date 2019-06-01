@@ -2,6 +2,9 @@ import {
 	promiseQuery,
 	getSQLConnection,
 	unauthorizedError,
+	serverError,
+	ServerError,
+	ERROR_CODES,
 } from '../../utility';
 
 import * as spellsController from './CharacterSpellsController';
@@ -23,7 +26,7 @@ export const characterBelongsToCampaign = async (request, response, next) => {
 			connection,
 			`
 				SELECT COUNT(*) as count FROM characterlist
-				WHERE characterID = :characterID AND campaignID = :campaignID AND NOT isDeleted = 1
+				WHERE characterID = :characterID AND campaignID = :campaignID
 			`,
 			{ campaignID, characterID }
 		);
@@ -37,6 +40,7 @@ export const characterBelongsToCampaign = async (request, response, next) => {
 		}
 	} catch (err) {
 		connection.release();
+		return serverError(response, err);
 	}
 };
 
@@ -149,6 +153,10 @@ export const getCharacter = async (path, query, user, connection) => {
 		`,
 		{ characterID },
 	))[0];
+
+	if (!character) {
+		return new ServerError(ERROR_CODES.NOT_FOUND, 'Character not found');
+	}
 
 	const spellsPromise = spellsController.getSpellsForCharacter(characterID, connection);
 	const proficienciesPromise = proficienciesController.getProficienciesForCharacter(characterID, connection);

@@ -22,8 +22,9 @@ import {
 	Spinner,
 } from '@blueprintjs/core';
 
-import { get, post } from 'Utility/fetch';
+import { get, post, httpDelete } from 'Utility/fetch';
 import classNames from 'Utility/classNames';
+import { displayError } from '../../../toast';
 
 export default class CharacterList extends React.Component {
 	static propTypes = {
@@ -83,6 +84,35 @@ export default class CharacterList extends React.Component {
 				[isNPC ? 'newNPCName' : 'newPCName']: '',
 			});
 		});
+	}
+
+	renderListItem = character => (
+		<div className={styles.listItem}>
+			<span>
+				{character.name}
+			</span>
+			<div className={styles.spacer}></div>
+			<Button
+				className={styles.button}
+				minimal
+				small
+				icon="trash"
+				onClick={() => this.deleteCharacter(character.characterID, character.name)}
+			/>
+		</div>
+	);
+
+	deleteCharacter = async (characterID, name) => {
+		const { campaignID } = this.props;
+
+		try {
+			const results = await httpDelete(`/api/campaigns/${campaignID}/characters/${characterID}`);
+			if (results.deleted) {
+				await this.fetchCharacters();
+			}
+		} catch (err) {
+			displayError(`Could not delete ${name}`);
+		}
 	}
 	
 	render() {
@@ -157,6 +187,7 @@ export default class CharacterList extends React.Component {
 					items={characters.filter(character => !character.isNPC)}
 					className={styles.list}
 					onItemSelected={navigateToCharacter}
+					renderItem={this.renderListItem}
 				/>
 
 				<Title
@@ -196,6 +227,7 @@ export default class CharacterList extends React.Component {
 					items={characters.filter(character => character.isNPC)}
 					className={styles.list}
 					onItemSelected={navigateToCharacter}
+					renderItem={this.renderListItem}
 				/>
 			</div>
 		);
