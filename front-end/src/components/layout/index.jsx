@@ -50,10 +50,7 @@ export default class Grid extends React.Component {
 		campaignTitle: '',
 		savedLayouts: [],
 		validating: true,
-	}
-
-	fetchCampaign = () => {
-		
+		focusedPanelId: -1,
 	}
 
 	async componentDidMount() {
@@ -97,6 +94,7 @@ export default class Grid extends React.Component {
 		if (panel.constructor === Layout) {
 			return this.renderLayout(panel);
 		}
+		const { focusedPanelId } = this.state;
 
 		return (
 			<ContentPanel
@@ -136,6 +134,8 @@ export default class Grid extends React.Component {
 				insertPaneIntoPanel={
 					(type, state, tabName) => this.insertPaneIntoPanel({ type, state, tabName }, panel)
 				}
+				focusedPanelId={focusedPanelId}
+				setFocusedPanelId={focusedPanelId => this.setState({ focusedPanelId })}
 			/>
 		);
 	}

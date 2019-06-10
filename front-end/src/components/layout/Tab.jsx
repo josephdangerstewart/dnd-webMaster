@@ -16,16 +16,18 @@ export default class Tab extends React.Component {
 		onClick: PropTypes.func,
 		onClose: PropTypes.func,
 		isDragging: PropTypes.bool,
+		hasPanelFocus: PropTypes.bool,
 	}
 
 	render() {
-		const { selected, label, onClick, onClose, isDragging } = this.props;
+		const { selected, label, onClick, onClose, isDragging, hasPanelFocus } = this.props;
 
 		return (
 			<div
 				className={classNames(
 					styles.tab,
 					selected ? styles.tabSelected : null,
+					hasPanelFocus ? styles.panelFocused : null,
 					isDragging ? styles.tabDragging : null
 				)}
 				onClick={onClick}>
