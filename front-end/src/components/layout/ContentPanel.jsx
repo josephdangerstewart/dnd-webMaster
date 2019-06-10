@@ -29,6 +29,8 @@ export default class ContentPanel extends React.Component {
 		dropPaneIntoPanel: PropTypes.func,
 		movePane: PropTypes.func,
 		renderContent: PropTypes.func,
+		focusedPanelId: PropTypes.number,
+		setFocusedPanelId: PropTypes.func,
 	}
 	
 	state = {
@@ -65,7 +67,7 @@ export default class ContentPanel extends React.Component {
 
 	mapTabs = (pane, index) => {
 		const { currentTab } = this.state;
-		const { tools, moveTabs, panelId } = this.props;
+		const { tools, moveTabs, panelId, focusedPanelId } = this.props;
 
 		const tool = tools.find(tool => tool.name === pane.getType());
 		let label;
@@ -89,6 +91,7 @@ export default class ContentPanel extends React.Component {
 				panelId={panelId}
 				moveTabs={moveTabs}
 				index={index}
+				hasPanelFocus={focusedPanelId === panelId}
 			/>
 		);
 	}
@@ -154,13 +157,21 @@ export default class ContentPanel extends React.Component {
 		);
 	}
 
+	handleFocus = () => {
+		const { panelId, focusedPanelId, setFocusedPanelId } = this.props;
+
+		if (panelId !== focusedPanelId) {
+			setFocusedPanelId(panelId);
+		}
+	}
+
 	render() {
 		const { panes, dropPaneIntoPanel, movePane, renderContent, panelId } = this.props;
 		const { currentTab, width, height } = this.state;
 
 		return (
 			<ResizeSensor onResize={this.componentResized}>
-				<div className={styles.pane}>
+				<div className={styles.pane} onClick={this.handleFocus}>
 					<div className={styles.paneHeader}>
 						<TabContainer
 							onDrop={item => {
