@@ -24,7 +24,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
 	});
 
 	// Error handling
-	player.addListener('initialization_error', ({ message }) => { console.error(message); });
+	player.addListener('initialization_error', (data) => { console.error(data); });
 	player.addListener('authentication_error', ({ message }) => { console.error(message); });
 	player.addListener('account_error', ({ message }) => { console.error(message); });
 	player.addListener('playback_error', ({ message }) => { console.error(message); });
