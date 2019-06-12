@@ -21,7 +21,8 @@ module.exports = {
         "react"
 	],
 	"globals": {
-		"React": true
+		"React": true,
+		"gtag": true
 	},
     "rules": {
         "indent": [
