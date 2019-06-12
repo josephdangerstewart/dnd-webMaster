@@ -7,7 +7,13 @@
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 
-			gtag('config', 'UA-141881258-1', { app_name: 'campaign_buddy' });
+			gtag(
+				'config',
+				'UA-141881258-1',
+				{
+					app_name: 'campaign_buddy_' + (location.hostname === 'app.dndcampaignbuddy.com' ? 'prod' : 'test')
+				}
+			);
 		</script>
 
 		<title>Campaign Buddy</title>
