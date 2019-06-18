@@ -18,6 +18,7 @@ import Title from '../title';
 
 import parseQueryString from 'Utility/query-string';
 import { get, post } from 'Utility/fetch';
+import { screenView } from 'Utility/gtag';
 import { displayError } from '../toast';
 
 import styles from './styles.less';
@@ -36,6 +37,8 @@ export default class UserProfilePage extends React.Component {
 	componentDidMount() {
 		const { location } = this.props;
 		const { back } = parseQueryString(location.search);
+		
+		screenView('user_profile');
 		
 		this.setState({
 			back,

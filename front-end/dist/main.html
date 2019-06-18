@@ -11,7 +11,10 @@
 				'config',
 				'UA-141881258-1',
 				{
-					app_name: 'campaign_buddy_' + (location.hostname === 'app.dndcampaignbuddy.com' ? 'prod' : 'test')
+					app_name: 'campaign_buddy_' + (location.hostname === 'app.dndcampaignbuddy.com' ? 'prod' : 'test'),
+					custom_map: {
+						dimension1: 'tool_open_method',
+					}
 				}
 			);
 		</script>

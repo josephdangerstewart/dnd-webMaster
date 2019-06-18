@@ -12,6 +12,7 @@ import Sidebar from './Sidebar';
 import Content from './Content';
 
 import { post, get } from '../../utility/fetch';
+import { screenView } from '../../utility/gtag';
 
 import styles from './styles.less';
 
@@ -22,6 +23,7 @@ export default class HomePage extends React.Component {
 	}
 
 	async componentDidMount() {
+		screenView('home_page');
 		this.loadCampaigns();
 	}
 	
