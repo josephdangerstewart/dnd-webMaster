@@ -28,7 +28,7 @@ export const openTool = (toolName, tool_open_method) => {
 export const useFeature = (featureName, toolName) => {
 	gtag(
 		'event',
-		'use_feature',
+		featureName,
 		{
 			event_category: toolName ? 'tool_feature' : 'system_feature',
 			event_label: `${featureName} in ${toolName ? toolName : 'system'}`,

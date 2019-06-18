@@ -2,6 +2,8 @@ import debounce from 'Utility/debounce';
 import { get } from 'Utility/fetch';
 import styles from './mention.less';
 
+import { useFeature } from 'Utility/gtag';
+
 import { Classes } from '@blueprintjs/core';
 
 export default class Mention {
@@ -208,6 +210,7 @@ export default class Mention {
 			id: this.results[index][this.idKey],
 			type: 'spells',
 		});
+		useFeature('at_mention');
 		this.quill.insertText(this.atIndex, ' ');
 		this.quill.setSelection(this.atIndex + 1, 0);
 		this.stopTracking();

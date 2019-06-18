@@ -22,6 +22,7 @@ import EditLayoutsDialog from './EditLayoutsDialog';
 
 import { displayError } from '../../toast';
 import { get, post } from 'Utility/fetch';
+import { useFeature } from 'Utility/gtag';
 
 import styles from './styles.less';
 
@@ -87,6 +88,7 @@ export default class Toolbar extends React.Component {
 						layoutData: savedLayouts,
 					}
 				);
+				useFeature('save_layout');
 			} catch (err) {
 				displayError('There was an error saving the layout');
 			}

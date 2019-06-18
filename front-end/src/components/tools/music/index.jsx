@@ -13,6 +13,7 @@ import {
 	get,
 	post,
 } from 'Utility/fetch';
+import { useFeature } from 'Utility/gtag';
 
 export default class MusicTool extends ToolBase {
 	state = {
@@ -56,6 +57,7 @@ export default class MusicTool extends ToolBase {
 				`/api/campaigns/${campaignID}/playlists`,
 				{ items }
 			);
+			useFeature('link_spotify_playlists', 'music');
 			await this.loadPlaylists();
 		} catch (err) {
 			displayError('Could not link playlists');
@@ -69,6 +71,7 @@ export default class MusicTool extends ToolBase {
 				`/api/campaigns/${campaignID}/playlists/hotkey`,
 				{ spotifyUri, hotkey }
 			);
+			useFeature('set_playlist_hotkey', 'music');
 			this.loadPlaylists();
 		} catch (err) {
 			displayError('Could not set hotkey');

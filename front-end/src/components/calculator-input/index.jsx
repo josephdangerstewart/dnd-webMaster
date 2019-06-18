@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import calculator from 'happycalculator';
 
+import { useFeature } from 'Utility/gtag';
+
 import {
 	NumericInput,
 	Keys,
@@ -31,6 +33,7 @@ export default class CalculatorInput extends React.Component {
 
 		try {
 			const result = calculator.calculate(value);
+			useFeature('calculator_input');
 			this.setState({
 				value: result,
 			}, () => {

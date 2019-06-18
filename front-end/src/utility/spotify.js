@@ -3,6 +3,7 @@
 import * as STATUS_CODES from 'http-status-codes';
 import keyboard from 'keyboardjs';
 import { get } from './fetch';
+import { useFeature } from './gtag';
 
 let token;
 let player;
@@ -100,6 +101,7 @@ export const setLinkedPlaylists = playlists => {
  */
 export const previous = () => {
 	if (player) {
+		useFeature('music_previous', 'music');
 		player.previousTrack();
 	}
 };
@@ -109,6 +111,7 @@ export const previous = () => {
  */
 export const skip = () => {
 	if (player) {
+		useFeature('music_skip', 'music');
 		player.nextTrack();
 	}
 };
@@ -118,6 +121,7 @@ export const skip = () => {
  */
 export const togglePlay = () => {
 	if (player) {
+		useFeature('music_toggle_play', 'music');
 		player.togglePlay();
 	}
 };
@@ -176,6 +180,8 @@ export const playPlaylist = async playlistUri => {
 			context_uri: playlistUri,
 		}
 	);
+
+	useFeature('music_play_playlist', 'music');
 
 	return response.status === STATUS_CODES.NO_CONTENT;
 };
