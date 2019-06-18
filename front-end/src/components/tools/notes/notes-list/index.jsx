@@ -15,6 +15,7 @@ import FolderBackButton from '../folder-back-button';
 
 import { get, post, httpDelete } from 'Utility/fetch';
 import classNames from 'Utility/classNames';
+import { useFeature } from 'Utility/gtag';
 import { displayError } from '../../../toast';
 
 import styles from './styles.less';
@@ -86,6 +87,7 @@ export default class NotesList extends React.Component {
 				const { folderID } = this.state;
 
 				await post(`/api/campaigns/${campaignID}/notes`, { folderID });
+				useFeature('create_note', 'notes');
 				this.setState({
 					creatingNote: false,
 				}, this.loadNotes);
@@ -113,6 +115,7 @@ export default class NotesList extends React.Component {
 				const { folderID } = this.state;
 
 				await post(`/api/campaigns/${campaignID}/notes/folders`, { parentID: folderID, title });
+				useFeature('create_folder');
 				this.setState({
 					creatingFolder: false,
 				}, this.loadNotes);
@@ -126,6 +129,7 @@ export default class NotesList extends React.Component {
 		try {
 			const { campaignID } = this.props;
 			await post(`/api/campaigns/${campaignID}/notes/folders/move-into/${dest}`, body);
+			useFeature('move_into_folder', 'notes');
 			this.loadNotes();
 		} catch (err) {
 			displayError('Could not move item');
@@ -194,6 +198,7 @@ export default class NotesList extends React.Component {
 		try {
 			const { campaignID } = this.props;
 			await httpDelete(`/api/campaigns/${campaignID}/notes/${noteID}`);
+			useFeature('delete_note', 'notes');
 			this.loadNotes();
 		} catch (err) {
 			displayError('Could not delete note');
@@ -204,6 +209,7 @@ export default class NotesList extends React.Component {
 		try {
 			const { campaignID } = this.props;
 			await httpDelete(`/api/campaigns/${campaignID}/notes/folders/${folderID}`);
+			useFeature('delete_folder', 'notes');
 			this.loadNotes();
 		} catch (err) {
 			displayError('Could not delete folder');

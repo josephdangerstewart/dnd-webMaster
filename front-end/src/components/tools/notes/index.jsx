@@ -5,6 +5,7 @@ import NotesList from './notes-list';
 import NoteEditor from './note-editor';
 
 import { get, post } from 'Utility/fetch';
+import { useFeature } from 'Utility/gtag';
 import debounce from 'Utility/debounce';
 import { displayError } from '../../toast';
 
@@ -36,6 +37,8 @@ export default class NotesTool extends ToolBase {
 			const { campaignID } = this.props;
 			const { noteID } = this.state;
 			const note = await get(`/api/campaigns/${campaignID}/notes/${noteID}`);
+
+			useFeature('open_note', 'notes');
 
 			this.setState({
 				note,

@@ -15,6 +15,7 @@ import Title from '../../title';
 import createSortableItem from '../../sortable-item';
 
 import classNames from 'Utility/classNames';
+import { useFeature } from 'Utility/gtag';
 
 import styles from './styles.less';
 
@@ -57,6 +58,7 @@ export default class EditLayoutsDialog extends React.Component {
 	deleteLayout = layout => () => {
 		const { layouts, updateLayouts } = this.props;
 		const newLayouts = layouts.filter(item => item !== layout);
+		useFeature('delete_layout');
 		updateLayouts(newLayouts);
 	}
 
@@ -68,6 +70,7 @@ export default class EditLayoutsDialog extends React.Component {
 			}
 		});
 		layout.default = !layout.default;
+		useFeature('set_default_layout');
 		updateLayouts(layouts);
 	}
 

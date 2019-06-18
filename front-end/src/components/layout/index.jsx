@@ -29,6 +29,7 @@ import {
 	insertIntoFirstPanel,
 } from './model/layout-manager';
 import { get } from 'Utility/fetch';
+import { screenView, openTool } from 'Utility/gtag';
 
 import Layout from './model/Layout';
 import tools from '../tools';
@@ -57,6 +58,9 @@ export default class Grid extends React.Component {
 		const { match } = this.props;
 		const currentCampaignID = match.params.id;
 		const campaign = await get(`/api/campaigns/${currentCampaignID}/exists`);
+
+		screenView('app');
+
 		if (campaign.exists) {
 			this.setState({
 				currentCampaignID,
@@ -175,7 +179,11 @@ export default class Grid extends React.Component {
 						this.setLayout(this.state.layout);
 					}}
 					insertPaneIntoPanel={
-						(type, state, tabName) => this.insertPaneIntoPanel({ type, state, tabName }, panel)
+						(type, state, tabName) => {
+							// Analytics code
+							openTool(type, 'pane_context_menu');
+							this.insertPaneIntoPanel({ type, state, tabName }, panel);
+						}
 					}
 					panelHasFocus={panelHasFocus}
 				/>
@@ -234,7 +242,11 @@ export default class Grid extends React.Component {
 	mapToolMenuItem = (tool, index) => (
 		<MenuItem
 			text={tool.displayName}
-			onClick={() => this.addPane(tool.name)}
+			onClick={() => {
+				// Analytics code
+				openTool(tool.name, 'initial_non_ideal_state');
+				this.addPane(tool.name);
+			}}
 			key={index}
 		/>
 	)
@@ -247,7 +259,11 @@ export default class Grid extends React.Component {
 				<div className={styles.rootFlex}>
 					<Toolbar
 						loadLayout={this.loadLayout}
-						addTool={this.addPane}
+						addTool={(toolName) => {
+							// Analytics code
+							openTool(toolName, 'toolbar');
+							this.addPane(toolName);
+						}}
 						goHome={this.goHome}
 						tools={tools}
 						campaignID={currentCampaignID}

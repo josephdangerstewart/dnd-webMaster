@@ -12,6 +12,7 @@ import {
 import debounce from 'Utility/debounce';
 import { get } from 'Utility/fetch';
 import { bindKeys, unbindKeys } from 'Utility/keyboard';
+import { useFeature } from 'Utility/gtag';
 
 import styles from './styles.less';
 
@@ -28,7 +29,10 @@ export default class GlobalSearchBar extends React.Component {
 	}
 
 	hotkeys = {
-		'ctrl + shift + f': () => this.setState({ open: true }),
+		'ctrl + shift + f': () => {
+			useFeature('global_search');
+			this.setState({ open: true });
+		},
 	}
 
 	componentDidMount() {

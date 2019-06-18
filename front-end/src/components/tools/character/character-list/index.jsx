@@ -24,6 +24,7 @@ import {
 
 import { get, post, httpDelete } from 'Utility/fetch';
 import classNames from 'Utility/classNames';
+import { useFeature } from 'Utility/gtag';
 import { displayError } from '../../../toast';
 
 export default class CharacterList extends React.Component {
@@ -79,6 +80,7 @@ export default class CharacterList extends React.Component {
 		}, async () => {
 			await post(`/api/campaigns/${campaignID}/characters`, { characterName, isNPC });
 			await this.fetchCharacters();
+			useFeature('create_character', 'character');
 			this.setState({
 				[isNPC ? 'creatingNPC' : 'creatingPC']: false,
 				[isNPC ? 'newNPCName' : 'newPCName']: '',
@@ -107,6 +109,7 @@ export default class CharacterList extends React.Component {
 
 		try {
 			const results = await httpDelete(`/api/campaigns/${campaignID}/characters/${characterID}`);
+			useFeature('delete_character', 'character');
 			if (results.deleted) {
 				await this.fetchCharacters();
 			}

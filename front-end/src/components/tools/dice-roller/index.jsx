@@ -7,6 +7,8 @@ import React from 'react';
 import ToolBase from '../ToolBase';
 import styles from './styles.less';
 
+import { useFeature } from 'Utility/gtag';
+
 
 import {
 	Button,
@@ -40,6 +42,7 @@ export default class diceroller extends ToolBase{
 			{
 				number += Math.floor(Math.random()*(previousState.max)+1);
 			}
+			useFeature('roll_dice', 'diceRoller');
 			return{
 				number,
 			};
