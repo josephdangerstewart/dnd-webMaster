@@ -189,6 +189,8 @@ export const globalSearch = async (path, queryString, user, connection) => {
 				characterName LIKE :query
 				AND
 				characterlist.campaignID = :campaignID
+				AND
+				NOT \`character\`.isDeleted = 1
 			${countSegment}
 		`,
 		variables
