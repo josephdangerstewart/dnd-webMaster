@@ -18,6 +18,7 @@ export default class NoteEditor extends React.Component {
 		onPropertyChanged: PropTypes.func.isRequired,
 		onBack: PropTypes.func.isRequired,
 		insertPaneIntoPanel: PropTypes.func.isRequired,
+		campaignID: PropTypes.number.isRequired,
 		savingNote: PropTypes.bool,
 	}
 
@@ -29,6 +30,7 @@ export default class NoteEditor extends React.Component {
 			onPropertyChanged,
 			savingNote,
 			insertPaneIntoPanel,
+			campaignID,
 		} = this.props;
 
 		return (
@@ -61,6 +63,7 @@ export default class NoteEditor extends React.Component {
 					value={note}
 					onChange={onPropertyChanged('noteContent')}
 					insertPaneIntoPanel={insertPaneIntoPanel}
+					campaignID={campaignID}
 				/>
 			</div>
 		);

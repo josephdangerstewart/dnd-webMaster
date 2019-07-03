@@ -16,6 +16,7 @@ Quill.register(MentionBlot);
 export default class RichTextEditor extends React.Component {
 	static propTypes = {
 		insertPaneIntoPanel: PropTypes.func.isRequired,
+		campaignID: PropTypes.number.isRequired,
 		value: PropTypes.string,
 		onChange: PropTypes.func,
 	}
@@ -40,12 +41,46 @@ export default class RichTextEditor extends React.Component {
 		if (event.target.parentElement.classList.contains('ql-mention-blot')) {
 			const { insertPaneIntoPanel } = this.props;
 			const value = MentionBlot.value(event.target.parentElement);
-			insertPaneIntoPanel('search', { type: value.type, resourceID: value.id });
+			const type = value.type;
+			const id = value.id;
+			
+			switch (type) {
+			case 'spell':
+			case 'feat':
+				return insertPaneIntoPanel('search', { type: `${type}s`, resourceID: id });
+			case 'equipment':
+				return insertPaneIntoPanel('search', { type, resourceID: id });
+			case 'character':
+				return insertPaneIntoPanel(
+					'character',
+					{
+						defaultCharacterID: id,
+						view: 'display',
+						toolSettings: {
+							orderings: [],
+						},
+					}
+				);
+			case 'note':
+				return insertPaneIntoPanel(
+					'notes',
+					{
+						defaultNoteID: id,
+					}
+				);
+			case 'folder':
+				return insertPaneIntoPanel(
+					'notes',
+					{
+						defaultFolderID: id,
+					}
+				);
+			}
 		}
 	}
 
 	render() {
-		const { value: propValue } = this.props;
+		const { value: propValue, campaignID } = this.props;
 		const { value: stateValue } = this.state;
 
 		return (
@@ -61,9 +96,7 @@ export default class RichTextEditor extends React.Component {
 						},
 						mention: {
 							container: '.ql-container',
-							endpoint: '/api/search/spells',
-							idKey: 'spellID',
-							nameKey: 'spellName',
+							campaignID,
 						},
 						clipboard: {
 							matchVisual: false,
