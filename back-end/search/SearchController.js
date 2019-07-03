@@ -111,6 +111,8 @@ export const globalSearch = async (path, queryString, user, connection) => {
 	let { count } = queryString;
 	if (!count) {
 		count = 10;
+	} else {
+		count = parseInt(count);
 	}
 
 	// Define the segment of the query that limits the results
@@ -137,7 +139,7 @@ export const globalSearch = async (path, queryString, user, connection) => {
 				spellID AS id,
 				'spell' AS type
 			FROM spell
-			WHERE spellName LIKE :query OR spellDesc LIKE :query
+			WHERE spellName LIKE :query
 			${countSegment}
 		`,
 		variables

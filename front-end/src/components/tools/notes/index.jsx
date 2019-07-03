@@ -130,6 +130,7 @@ export default class NotesTool extends ToolBase {
 					onBack={this.onBack}
 					onPropertyChanged={this.onPropertyChanged}
 					savingNote={savingNote}
+					campaignID={campaignID}
 					insertPaneIntoPanel={insertPaneIntoPanel}
 				/>
 			);

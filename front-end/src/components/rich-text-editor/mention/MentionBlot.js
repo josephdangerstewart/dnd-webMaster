@@ -1,3 +1,12 @@
+const colorMap = {
+	spell: '#AB3428',
+	feat: '#2D728F',
+	equipment: '#360568',
+	character: '#995D81',
+	note: '#595f72',
+	folder: '#595f72',
+};
+
 export default Quill => {
 	const InlineBlot = Quill.import('blots/embed');
 
@@ -12,6 +21,9 @@ export default Quill => {
 			node.innerText = `@${value.name}`;
 			node.setAttribute('data-resource-id', value.id);
 			node.setAttribute('data-resource-type', value.type || 'spells');
+
+			node.style.color = colorMap[value.type];
+
 			return node;
 		}
 

@@ -12,8 +12,6 @@ export default class Mention {
 	atIndex = null;
 	length = 0;
 	dropdownContainer = null;
-	idKey = '';
-	nameKey = '';
 	selectedIndex = 0;
 	results = [];
 
@@ -32,9 +30,7 @@ export default class Mention {
 		);
 		rootContainer.appendChild(this.dropdownContainer);
 
-		this.endpoint = options.endpoint;
-		this.nameKey = options.nameKey;
-		this.idKey = options.idKey;
+		this.campaignID = options.campaignID;
 
 		quill.on('text-change', this.update);
 		quill.on('selection-change', this.selectionChange);
@@ -103,6 +99,7 @@ export default class Mention {
 			this.query = '';
 			this.atIndex = selection.index;
 			this.positionDropdown(selection);
+			this.renderDropdown([], true);
 		}
 	}
 
@@ -123,45 +120,57 @@ export default class Mention {
 				}
 				this.length = selection.index - this.atIndex;
 				const query = this.quill.getText(this.atIndex, this.length);
-				this.results = await get(`${this.endpoint}?query=${query}&count=5`);
+				this.results = await get(`/api/search/global/${this.campaignID}?query=${query}&count=5`);
 				if (this.selectedIndex > this.results.length - 1) {
 					this.selectedIndex = this.results.length - 1;
 				}
 				if (this.selectedIndex < 0) {
 					this.selectedIndex = 0;
 				}
-				this.renderDropdown(this.results);
+				this.renderDropdown(this.results, query.length === 0);
 			}
 		},
 		250
 	)
 
 	// Renders the results in a dropdown list
-	renderDropdown = results => {
+	renderDropdown = (results, displayHelpText) => {
 		while (this.dropdownContainer.firstChild) {
 			this.dropdownContainer.removeChild(this.dropdownContainer.firstChild);
 		}
 
-		results.forEach(
-			(result, index) => {
-				const container = document.createElement('li');
-				container.classList.add(styles.dropDownChild);
-				if (index === this.selectedIndex) {
-					container.classList.add(styles.selected);
+		if (displayHelpText) {
+			const container = document.createElement('li');
+			container.classList.add(styles.dropDownChild);
+
+			const text = document.createElement('span');
+			text.classList.add(styles.menuItem);
+			text.innerText = 'Begin searching for something...';
+
+			container.appendChild(text);
+			this.dropdownContainer.appendChild(container);
+		} else {
+			results.forEach(
+				(result, index) => {
+					const container = document.createElement('li');
+					container.classList.add(styles.dropDownChild);
+					if (index === this.selectedIndex) {
+						container.classList.add(styles.selected);
+					}
+	
+					const link = document.createElement('a');
+					link.classList.add(Classes.MENU_ITEM);
+					link.classList.add(styles.menuItem);
+					link.innerText = result.name;
+	
+					link.onclick = () => this.handleSelect(index);
+	
+					container.appendChild(link);
+	
+					this.dropdownContainer.appendChild(container);
 				}
-
-				const link = document.createElement('a');
-				link.classList.add(Classes.MENU_ITEM);
-				link.classList.add(styles.menuItem);
-				link.innerText = result[this.nameKey];
-
-				link.onclick = () => this.handleSelect(index);
-
-				container.appendChild(link);
-
-				this.dropdownContainer.appendChild(container);
-			}
-		);
+			);
+		}
 
 		if (this.tracking) {
 			this.dropdownContainer.classList.remove(styles.hidden);
@@ -206,9 +215,9 @@ export default class Mention {
 	handleSelect = index => {
 		this.quill.deleteText(this.atIndex - 1, this.length + 1);
 		this.quill.insertEmbed(this.atIndex - 1, 'mention', {
-			name: this.results[index][this.nameKey],
-			id: this.results[index][this.idKey],
-			type: 'spells',
+			name: this.results[index].name,
+			id: this.results[index].id,
+			type: this.results[index].type,
 		});
 		useFeature('at_mention');
 		this.quill.insertText(this.atIndex, ' ');
