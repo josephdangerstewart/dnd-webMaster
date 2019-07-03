@@ -7,3 +7,4 @@ bundle.sql
 *.bundle.sql
 coverage/
 database-credentials.json
+deploy.sh
