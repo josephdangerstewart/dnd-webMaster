@@ -7,5 +7,6 @@ export const myServerMethod = (path, query, user) => {
 
 	return {
 		response: 'The request was good! Check the server\'s console!',
+		newThing: 'This is a new thing!',
 	};
 };
