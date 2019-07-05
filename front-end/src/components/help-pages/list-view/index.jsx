@@ -41,7 +41,12 @@ export default class ArticleView extends React.Component {
 	render() {
 		return (
 			<div className={styles.root}>
-				<Title>Campaign Buddy Help Pages</Title>
+				<Title
+					className={styles.title}
+					fontSize={50}
+				>
+					Campaign Buddy Help Pages
+				</Title>
 			</div>
 		);
 	}
