@@ -1,5 +1,10 @@
 import React from 'react';
 
+import {
+	InputGroup,
+	Spinner,
+} from '@blueprintjs/core';
+
 import Title from '../../title';
 
 import { get } from 'Utility/fetch';
@@ -12,6 +17,10 @@ export default class ArticleView extends React.Component {
 		query: '',
 		articles: [],
 		loading: true,
+	}
+
+	componentDidMount() {
+		this.fetchPinnedArticles();
 	}
 
 	fetchPinnedArticles = async () => {
@@ -39,6 +48,8 @@ export default class ArticleView extends React.Component {
 	}
 
 	render() {
+		const { loading, query } = this.state;
+
 		return (
 			<div className={styles.root}>
 				<Title
@@ -47,6 +58,15 @@ export default class ArticleView extends React.Component {
 				>
 					Campaign Buddy Help Pages
 				</Title>
+				<InputGroup
+					placeholder="Roll initiative..."
+					leftIcon="search"
+					rightElement={
+						loading ? <Spinner size={16} /> : undefined
+					}
+					className={styles.input}
+					value={query}
+				/>
 			</div>
 		);
 	}
