@@ -34,7 +34,9 @@ noAuthStaticAssets.forEach(asset => {
 	app.route(asset).get(cb);
 
 	if (asset.endsWith('.html')) {
-		app.route(asset.substring(0, asset.length - 5)).get(cb);
+		const route = asset.substring(0, asset.length - 5);
+		app.route(`${route}*`).get(cb);
+		app.route(route).get(cb);
 	}
 });
 
