@@ -47,8 +47,19 @@ export default class ArticleView extends React.Component {
 		}, this.searchArticles);
 	}
 
+	renderArticle = article => (
+		<div>
+			<Title
+				fontSize={20}
+			>
+				{article.title}
+			</Title>
+			<p>{article.description}</p>
+		</div>
+	)
+
 	render() {
-		const { loading, query } = this.state;
+		const { loading, query, articles } = this.state;
 
 		return (
 			<div className={styles.root}>
@@ -59,14 +70,18 @@ export default class ArticleView extends React.Component {
 					Campaign Buddy Help Pages
 				</Title>
 				<InputGroup
-					placeholder="Roll initiative..."
+					placeholder="Roll investigation..."
 					leftIcon="search"
 					rightElement={
 						loading ? <Spinner size={16} /> : undefined
 					}
 					className={styles.input}
 					value={query}
+					onChange={this.onQueryChange}
 				/>
+				<div className={styles.articleContainer}>
+					{articles.map(this.renderArticle)}
+				</div>
 			</div>
 		);
 	}
