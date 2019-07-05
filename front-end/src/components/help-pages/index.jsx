@@ -17,7 +17,7 @@ export default class App extends React.Component {
 			<DragDropContextProvider backend={HTML5Backend}>
 				<BrowserRouter>
 					<Switch>
-						<Route path="/help/:url?" component={ArticleView} />
+						<Route path="/help/:url" component={ArticleView} />
 						<Route default component={ListView} />
 					</Switch>
 				</BrowserRouter>
