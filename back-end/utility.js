@@ -20,6 +20,10 @@ try {
 	};
 }
 
+Array.prototype.asyncMap = function(callback) {
+	return Promise.all(this.map(callback));
+};
+
 /**
  * @description This is a utility function for the mysql module that typecasts the MySQL BIT
  * datatype to a javascript boolean

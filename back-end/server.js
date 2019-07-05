@@ -5,6 +5,8 @@ import express from 'express';
 import path from 'path';
 import configureAuthentication from './authentication';
 import registerRoutes from './route-registry';
+import registerRoutesNoAuth from './route-registry-no-auth';
+import noAuthStaticAssets from './no-auth-static-assets';
 import bodyParser from 'body-parser';
 
 // Declare our server object
@@ -23,14 +25,20 @@ app.use((request, response, next) => {
 	next();
 });
 
-// Declare the login page and it's stylesheet as the only publicly accessible route
-app.route('/login').get((request, response) => {
-	response.sendFile('front-end/dist/login.html', { root: __dirname });
+// Set up routes that do not need authentication
+noAuthStaticAssets.forEach(asset => {
+	const cb = (request, response) => {
+		response.sendFile(`front-end/dist${asset}`, { root: __dirname });
+	};
+
+	app.route(asset).get(cb);
+
+	if (asset.endsWith('.html')) {
+		app.route(asset.substring(0, asset.length - 5)).get(cb);
+	}
 });
 
-app.route('/css/login.css').get((request, response) => {
-	response.sendFile('front-end/dist/css/login.css', { root: __dirname });
-});
+registerRoutesNoAuth(app);
 
 // Set up authentication so that any route below this method call requires the user be logged in
 configureAuthentication(app);

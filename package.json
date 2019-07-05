@@ -36,6 +36,7 @@
     "less-loader": "^4.1.0",
     "mysql": "^2.16.0",
     "node-fetch": "^2.3.0",
+    "parse-md": "^1.0.3",
     "passport": "^0.4.0",
     "passport-google-oauth": "^1.0.0",
     "passport-mock-strategy": "^1.1.1",
@@ -68,8 +69,8 @@
     "server": "webpack --mode=development --config=webpack.server.js && node server.bundle.js",
     "lint": "eslint .",
     "lint:autofix": "eslint . --fix",
-	"build:database": "node database/bundle-sql.js",
-	"build:prod": "webpack --mode=production && webpack --mode=production --config=webpack.server.js"
+    "build:database": "node database/bundle-sql.js",
+    "build:prod": "webpack --mode=production && webpack --mode=production --config=webpack.server.js"
   },
   "jest": {
     "projects": [

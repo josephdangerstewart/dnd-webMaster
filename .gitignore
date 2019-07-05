@@ -2,6 +2,7 @@ node_modules/
 yarn.lock
 package-lock.json
 bundle.js
+*.bundle.js
 server.bundle.js
 bundle.sql
 *.bundle.sql
