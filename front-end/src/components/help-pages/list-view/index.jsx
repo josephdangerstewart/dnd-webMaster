@@ -1,8 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import queryString from 'query-string';
 
 import {
 	InputGroup,
 	Spinner,
+	AnchorButton,
 } from '@blueprintjs/core';
 
 import Title from '../../title';
@@ -13,14 +16,26 @@ import debounce from 'Utility/debounce';
 import styles from './styles.less';
 
 export default class ArticleView extends React.Component {
+	static propTypes = {
+		location: PropTypes.object,
+	}
+
 	state = {
 		query: '',
 		articles: [],
 		loading: true,
+		backHref: '/',
 	}
 
 	componentDidMount() {
 		this.fetchPinnedArticles();
+		const { location: { search } } = this.props;
+		const query = queryString.parse(search);
+		if (query.backHref) {
+			this.setState({
+				backHref: query.backHref,
+			});
+		}
 	}
 
 	fetchPinnedArticles = async () => {
@@ -59,7 +74,7 @@ export default class ArticleView extends React.Component {
 	)
 
 	render() {
-		const { loading, query, articles } = this.state;
+		const { loading, query, articles, backHref } = this.state;
 
 		return (
 			<div className={styles.root}>
@@ -73,7 +88,15 @@ export default class ArticleView extends React.Component {
 					placeholder="Roll investigation..."
 					leftIcon="search"
 					rightElement={
-						loading ? <Spinner size={16} /> : undefined
+						loading ?
+							<Spinner size={16} />
+							:
+							<AnchorButton
+								href={backHref}
+								icon="arrow-left"
+								className={styles.button}
+								minimal
+							/>
 					}
 					className={styles.input}
 					value={query}

@@ -220,7 +220,7 @@ export default class Toolbar extends React.Component {
 					<Menu className={styles.toolbarMenu}>
 						<MenuItem text="Logout" href="/api/auth/logout" />
 						<MenuItem text="Profile" href={`/profile?back=/app/${campaignID}`} />
-						<MenuItem text="Help" href="/help" />
+						<MenuItem text="Help" href={`/help?backHref=/app/${campaignID}`} />
 					</Menu>
 				</Popover>
 				<SaveLayoutDialog
