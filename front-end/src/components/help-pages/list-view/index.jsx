@@ -48,11 +48,11 @@ export default class ArticleView extends React.Component {
 	}
 
 	renderArticle = article => (
-		<div>
+		<div className={styles.article}>
 			<Title
 				fontSize={20}
 			>
-				{article.title}
+				<a href={`/help/${article.url}`}>{article.title}</a>
 			</Title>
 			<p>{article.description}</p>
 		</div>
