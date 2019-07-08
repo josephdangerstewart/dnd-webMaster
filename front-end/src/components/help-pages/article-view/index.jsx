@@ -2,7 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import showdown from 'showdown';
 
+import {
+	AnchorButton,
+} from '@blueprintjs/core';
+
 import { get } from 'Utility/fetch';
+
+import styles from './styles.less';
+import Title from '../../title';
 
 export default class ArticleView extends React.Component {
 	static propTypes = {
@@ -11,6 +18,7 @@ export default class ArticleView extends React.Component {
 
 	state = {
 		article: '',
+		title: '',
 	}
 	
 	componentDidMount() {
@@ -23,13 +31,33 @@ export default class ArticleView extends React.Component {
 		const articleObject = await get(`/api/help-pages/get/${url}`);
 		this.setState({
 			article: converter.makeHtml(articleObject.content),
+			title: articleObject.metadata.title,
 		});
 	}
 	
 	render() {
-		const { article } = this.state;
+		const { article, title } = this.state;
 		return (
-			<p>{article}</p>
+			<div className={styles.articleContainer}>
+				<Title
+					fontSize={48}
+					color="primary"
+					leftComponent={
+						<AnchorButton
+							icon="arrow-left"
+							minimal
+							href="/help"
+							className={styles.button}
+						/>
+					}
+				>
+					{title}
+				</Title>
+				<div
+					dangerouslySetInnerHTML={{ __html: article }}
+					className={styles.articleContent}
+				/>
+			</div>
 		);
 	}
 }

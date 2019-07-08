@@ -1,0 +1,23 @@
+@import '../../../styles/colors.less';
+@import '../../../styles/mixins.less';
+
+.article-container {
+	padding: 10px 25px;
+	margin: auto;
+	max-width: 800px;
+
+	.article-content {
+		color: @text-color;
+
+		p {
+			text-indent: 2em;
+			font-size: 16px;
+			line-height: 1.5em;
+		}
+	}
+
+	.button {
+		.with-button-styles(@text-color);
+		margin-right: 12px;
+	}
+}
