@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	Button,
+	AnchorButton,
 	Intent,
 	Icon,
 	Popover,
@@ -54,6 +55,18 @@ export default class Content extends React.Component {
 							<MenuItem text="Profile" href="/profile" />
 						</Menu>
 					</Popover>
+					<AnchorButton
+						minimal
+						icon={
+							<Icon
+								icon="help"
+								iconSize={24}
+							/>
+						}
+						large
+						intent={Intent.PRIMARY}
+						href="/help"
+					/>
 				</div>
 				<Carousel
 					title="Campaigns"
