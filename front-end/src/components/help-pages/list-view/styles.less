@@ -1,0 +1,36 @@
+@import '../../../styles/colors.less';
+@import '../../../styles/mixins.less';
+
+.root {
+	height: 100%;
+	padding: 5px;
+
+	.title {
+		text-align: center;
+		max-width: 600px;
+		margin: 30px auto;
+		line-height: 1.5em;
+	}
+
+	.input {
+		margin: auto;
+		max-width: 500px;
+	}
+
+	.article-container {
+		margin: 50px auto 0;
+		max-width: 500px;
+
+		.article {
+			margin: 20px 0;
+
+			h1 a {
+				color: @text-color;
+			}
+		}
+	}
+
+	.button {
+		.with-button-styles(@text-color);
+	}
+}
