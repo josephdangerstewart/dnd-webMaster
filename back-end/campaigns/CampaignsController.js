@@ -113,7 +113,7 @@ export const updateCampaignDetails = async (path, query, user, connection, body,
 	const results = await promiseQuery(
 		connection,
 		`
-			UPDATE campaigns
+			UPDATE campaign
 			SET
 				${updateStatement}
 			WHERE

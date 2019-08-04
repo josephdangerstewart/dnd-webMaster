@@ -162,7 +162,7 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 		}
 
 		if (results instanceof ServerError) {
-			return response.status(results.type).json({ error: response.message });
+			return response.status(results.type).json({ error: results.message });
 		}
 
 		return response.json(results || {});
