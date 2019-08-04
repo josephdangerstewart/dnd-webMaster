@@ -90,24 +90,32 @@ export const updateCampaignDetails = async (path, query, user, connection, body,
 	const {
 		campaignTitle,
 	} = body;
+	let {
+		imageUrl,
+	} = body;
 	const {
 		campaignID,
 	} = path;
 
-	let imageUrl;
-	try {
-		imageUrl = await uploadImage(file);
-	} catch (e) {
-		return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image for campaign icon');
+	if (!imageUrl && file) {
+		try {
+			imageUrl = await uploadImage(file);
+		} catch (e) {
+			return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image for campaign icon');
+		}
 	}
+
+	const updateStatement = [
+		imageUrl ? 'imageUrl = :imageUrl' : null,
+		campaignTitle ? 'campaignTitle = :campaignTitle' : null,
+	].filter(str => str).join(',');
 
 	const results = await promiseQuery(
 		connection,
 		`
 			UPDATE campaigns
 			SET
-				campaignTitle = :campaignTitle,
-				imageUrl = :imageUrl
+				${updateStatement}
 			WHERE
 				campaignID = :campaignID
 		`,
