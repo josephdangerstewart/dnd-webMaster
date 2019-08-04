@@ -2,6 +2,9 @@ import {
 	promiseQuery,
 	getSQLConnection,
 	unauthorizedError,
+	uploadImage,
+	ServerError,
+	ERROR_CODES,
 } from '../utility';
 
 /**
@@ -77,6 +80,42 @@ export const createNewCampaign = async (path, query, user, connection, body) => 
 	);
 	return {
 		campaignID: campaignResults.insertId,
+	};
+};
+
+/**
+ * @description Updates campaign information and uploads a new profile picture if necessary
+ */
+export const updateCampaignDetails = async (path, query, user, connection, body, files, file) => {
+	const {
+		campaignTitle,
+	} = body;
+	const {
+		campaignID,
+	} = path;
+
+	let imageUrl;
+	try {
+		imageUrl = await uploadImage(file);
+	} catch (e) {
+		return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image for campaign icon');
+	}
+
+	const results = await promiseQuery(
+		connection,
+		`
+			UPDATE campaigns
+			SET
+				campaignTitle = :campaignTitle,
+				imageUrl = :imageUrl
+			WHERE
+				campaignID = :campaignID
+		`,
+		{ campaignTitle, campaignID, imageUrl }
+	);
+
+	return {
+		changed: results.changedRows > 0,
 	};
 };
 

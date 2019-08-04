@@ -7,6 +7,7 @@
 
 import STATUS_CODES from 'http-status-codes';
 import mysql from 'mysql';
+import cloudinary from 'cloudinary';
 
 let databaseCredentials;
 try {
@@ -20,9 +21,26 @@ try {
 	};
 }
 
+let cloudinaryCredentials;
+try {
+	cloudinaryCredentials = require('./cloudinary-api.json');
+} catch (err) {
+	cloudinaryCredentials = {
+		api: '',
+		secret: '',
+	};
+}
+
 Array.prototype.asyncMap = function(callback) {
 	return Promise.all(this.map(callback));
 };
+
+// Configure cloudinary with campaign buddy credentials
+cloudinary.config({ 
+	cloud_name: 'josephdangerstewart', 
+	api_key: cloudinaryCredentials.api, 
+	api_secret: cloudinaryCredentials.secret,
+});
 
 /**
  * @description This is a utility function for the mysql module that typecasts the MySQL BIT
@@ -138,7 +156,7 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 	}
 	
 	try {
-		const results = await callback(request.params, request.query, request.user, connection, request.body, request.files);
+		const results = await callback(request.params, request.query, request.user, connection, request.body, request.files, request.file);
 		if (withDBConnection) {
 			connection.release();
 		}
@@ -159,6 +177,24 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 	}
 };
 
+/**
+ * Uploads an image to cloudinary and returns the url
+ * 
+ * @param {Object} image The image being uploaded
+ * @returns {Promise<String>} A promise resolving to the url of the new uploaded image in cloudinary 
+ */
+export const uploadImage = async image => 
+	new Promise((resolve, reject) => {
+		cloudinary.v2.uploader.upload_stream(
+			{ resource_type: 'raw', folder: 'campaign-buddy/uploads' }, 
+			(error, result) => {
+				if (error) {
+					return reject(error);
+				}
+				return resolve(result.url);
+			}
+		).end(image.buffer);
+	});
 
 /*
  * A custom error class for quietly throwing errors

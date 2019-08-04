@@ -9,3 +9,4 @@ bundle.sql
 coverage/
 database-credentials.json
 deploy.sh
+cloudinary-api.json
