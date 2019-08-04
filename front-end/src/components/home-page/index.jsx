@@ -85,6 +85,7 @@ export default class HomePage extends React.Component {
 				<Content
 					navigateToCampaign={this.navigateToCampaign}
 					campaigns={campaigns}
+					loadCampaigns={this.loadCampaigns}
 				/>
 			</div>
 		);

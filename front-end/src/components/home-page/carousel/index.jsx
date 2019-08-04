@@ -22,10 +22,11 @@ export default class Carousel extends React.Component {
 		defaultImage: PropTypes.string.isRequired,
 		onItemSelected: PropTypes.func.isRequired,
 		noItemsText: PropTypes.string,
+		renderItemMenu: PropTypes.func,
 	}
 
 	mapItem = item => {
-		const { defaultImage, onItemSelected } = this.props;
+		const { defaultImage, onItemSelected, renderItemMenu } = this.props;
 
 		return (
 			<CarouselItem
@@ -33,6 +34,7 @@ export default class Carousel extends React.Component {
 				imageUrl={item.imageUrl}
 				defaultImage={defaultImage}
 				onItemSelected={() => onItemSelected(item.id)}
+				menu={renderItemMenu && renderItemMenu(item)}
 			/>
 		);
 	}

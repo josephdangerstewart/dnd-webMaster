@@ -1,0 +1,2 @@
+// A function for generating unique ids for dynamically generated react components
+export default (prefix = '') => `${prefix}_${Math.random().toString(36).substr(2)}_${Date.now().toString(36)}_${Math.random().toString(36).substr(2)}`;
