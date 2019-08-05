@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
 	Button,
 	Intent,
+	Spinner,
 } from '@blueprintjs/core';
 
 import Title from '../title';
@@ -25,6 +26,7 @@ export default class ActionModal extends React.Component {
 			PropTypes.string,
 		]),
 		onOpening: PropTypes.func,
+		loading: PropTypes.bool,
 	}
 
 	render() {
@@ -37,6 +39,7 @@ export default class ActionModal extends React.Component {
 			submitButtonText,
 			cancelButtonText,
 			maxWidth,
+			loading,
 			...rest
 		} = this.props;
 
@@ -55,14 +58,16 @@ export default class ActionModal extends React.Component {
 						minimal
 						className={styles.buttonMinimal}
 						onClick={onCancel}
+						disabled={loading}
 					>
 						{cancelButtonText || 'Cancel'}
 					</Button>
 					<Button
 						intent={Intent.PRIMARY}
 						onClick={() => onSubmit(name)}
+						disabled={loading}
 					>
-						{submitButtonText || 'Submit'}
+						{loading ? <Spinner size={16} /> : submitButtonText || 'Submit'}
 					</Button>
 				</div>
 			</Modal>

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import {
 	InputGroup,
 	Keys,
-	Spinner,
 } from '@blueprintjs/core';
 
 import ActionModal from '../modal/ActionModal';
@@ -68,6 +67,7 @@ export default class CampaignNameModal extends React.Component {
 				onSubmit={this.onSubmit}
 				title="Rename this campaign!"
 				onOpening={() => this.setState({ name: '' })}
+				loading={loading}
 			>
 				<InputGroup
 					placeholder={previousName}
@@ -75,9 +75,6 @@ export default class CampaignNameModal extends React.Component {
 					onChange={event => this.setState({ name: event.target.value })}
 					autoFocus
 					onKeyDown={this.handleKeyDown}
-					rightElement={loading && (
-						<Spinner size={16} />
-					)}
 				/>
 			</ActionModal>
 		);

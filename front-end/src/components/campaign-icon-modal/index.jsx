@@ -45,6 +45,7 @@ export default class CampaignIconModal extends React.Component {
 			isOpen,
 			onClose,
 		} = this.props;
+		const { loading } = this.state;
 
 		return (
 			<ActionModal
@@ -52,6 +53,7 @@ export default class CampaignIconModal extends React.Component {
 				onCancel={onClose}
 				onSubmit={this.handleSubmit}
 				title="Set a campaign icon!"
+				loading={loading}
 			>
 				<ImageUploader
 					onChange={file => this.setState({ file })}

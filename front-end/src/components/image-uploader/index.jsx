@@ -10,7 +10,8 @@ import ImageUploader from 'Utility/imageUploader';
 
 import styles from './styles.less';
 
-const MAX_FILE_UPLOAD_SIZE = 102400;
+const MAX_FILE_UPLOAD_SIZE = 524288000;
+const MAX_FILE_UPLOAD_SIZE_STRING = '500 MB';
 
 export default class ImageUploaderComponent extends React.Component {
 	static propTypes = {
@@ -74,7 +75,7 @@ export default class ImageUploaderComponent extends React.Component {
 				/>
 				<p>Upload Image</p>
 				{showFileSizeError && (
-					<p className={styles.fileSizeError}>File size must not exceed 100 KB</p>
+					<p className={styles.fileSizeError}>File size must not exceed {MAX_FILE_UPLOAD_SIZE_STRING}</p>
 				)}
 			</div>
 		);
