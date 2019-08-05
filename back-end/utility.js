@@ -7,6 +7,9 @@
 
 import STATUS_CODES from 'http-status-codes';
 import mysql from 'mysql';
+import cloudinary from 'cloudinary';
+import DataURI from 'datauri';
+import path from 'path';
 
 let databaseCredentials;
 try {
@@ -20,9 +23,31 @@ try {
 	};
 }
 
+let cloudinaryCredentials;
+try {
+	cloudinaryCredentials = require('./cloudinary-api.json');
+} catch (err) {
+	cloudinaryCredentials = {
+		key: '',
+		secret: '',
+	};
+}
+
 Array.prototype.asyncMap = function(callback) {
 	return Promise.all(this.map(callback));
 };
+
+// Configure cloudinary with campaign buddy credentials
+cloudinary.config({ 
+	cloud_name: 'josephdangerstewart', 
+	api_key: cloudinaryCredentials.key, 
+	api_secret: cloudinaryCredentials.secret,
+});
+
+const dataUri = new DataURI();
+
+const extractDataUri = file => 
+	dataUri.format(path.extname(file.originalname).toString(), file.buffer);
 
 /**
  * @description This is a utility function for the mysql module that typecasts the MySQL BIT
@@ -138,13 +163,13 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 	}
 	
 	try {
-		const results = await callback(request.params, request.query, request.user, connection, request.body, request.files);
+		const results = await callback(request.params, request.query, request.user, connection, request.body, request.files, request.file);
 		if (withDBConnection) {
 			connection.release();
 		}
 
 		if (results instanceof ServerError) {
-			return response.status(results.type).json({ error: response.message });
+			return response.status(results.type).json({ error: results.message });
 		}
 
 		return response.json(results || {});
@@ -159,6 +184,58 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 	}
 };
 
+/**
+ * Uploads an image to cloudinary and returns the url
+ * 
+ * @param {Object} image The image being uploaded
+ * @returns {Promise<String>} A promise resolving to the url of the new uploaded image in cloudinary 
+ */
+export const uploadImage = async image => 
+	new Promise((resolve, reject) => {
+		cloudinary.v2.uploader.upload(
+			extractDataUri(image).content,
+			{
+				folder: 'campaign-buddy/uploads',
+				quality: 'auto:eco',
+				width: 150,
+				height: 150,
+				crop: 'fit',
+			}, 
+			(error, result) => {
+				if (error) {
+					return reject(error);
+				}
+				return resolve(result.url);
+			}
+		);
+	});
+
+export const deleteImage = async url =>
+	new Promise((resolve, reject) => {
+		const match = /.+\/uploads\/(.+)\.png/g.exec(url);
+		if (!match && url.startsWith('https://res.cloudinary.com/josephdangerstewart')) {
+			reject({
+				error: 'Non-valid cloudinary url',
+				url,
+			});
+		} else if (!match) {
+			resolve();
+		}
+
+		cloudinary.v2.uploader.destroy(
+			`campaign-buddy/uploads/${match[1]}`,
+			(result, error) => {
+				if (error) {
+					reject({
+						error,
+						url,
+					});
+				}
+
+				resolve();
+			}
+		);
+	});
 
 /*
  * A custom error class for quietly throwing errors

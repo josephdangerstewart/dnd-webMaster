@@ -18,12 +18,17 @@ export default class SaveLayoutDialog extends React.Component {
 	static propTypes = {
 		open: PropTypes.bool.isRequired,
 		children: PropTypes.node.isRequired,
+		maxWidth: PropTypes.oneOfType([
+			PropTypes.string,
+			PropTypes.number,
+		]),
 	}
 	
 	render() {
 		const {
 			open,
 			children,
+			maxWidth,
 			...rest
 		} = this.props;
 
@@ -34,7 +39,13 @@ export default class SaveLayoutDialog extends React.Component {
 				{...rest}
 			>
 				<div className={styles.dialogRoot}>
-					<div className={classNames(styles.dialogCard, Classes.ELEVATION_3)}>
+					<div
+						className={classNames(
+							styles.dialogCard,
+							Classes.ELEVATION_3
+						)}
+						style={{ maxWidth }}
+					>
 						{children}
 					</div>
 				</div>

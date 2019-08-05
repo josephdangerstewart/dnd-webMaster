@@ -2,7 +2,13 @@ import {
 	promiseQuery,
 	getSQLConnection,
 	unauthorizedError,
+	uploadImage,
+	deleteImage,
+	ServerError,
+	ERROR_CODES,
 } from '../utility';
+
+const MAX_FILE_UPLOAD_SIZE = 524288000;
 
 /**
  * @description This is a piece of express middleware that checks if a user has
@@ -32,7 +38,8 @@ export const getAllCampaigns = async (path, query, user, connection) => {
 		`
 			SELECT 
 				campaign.campaignID,
-				campaignTitle
+				campaignTitle,
+				campaignLogoURL
 			FROM
 				campaignlist JOIN
 				campaign ON campaign.campaignID = campaignlist.campaignID
@@ -77,6 +84,81 @@ export const createNewCampaign = async (path, query, user, connection, body) => 
 	);
 	return {
 		campaignID: campaignResults.insertId,
+	};
+};
+
+/**
+ * @description Updates campaign information and uploads a new profile picture if necessary
+ */
+export const updateCampaignDetails = async (path, query, user, connection, body, files, file) => {
+	const {
+		campaignTitle,
+	} = body;
+	let {
+		imageUrl,
+	} = body;
+	const {
+		campaignID,
+	} = path;
+
+	if (!imageUrl && file) {
+		if (file.size > MAX_FILE_UPLOAD_SIZE) {
+			return new ServerError(ERROR_CODES.BAD_REQUEST, 'Max file upload size is 500 MB');
+		}
+
+		try {
+			imageUrl = await uploadImage(file);
+		} catch (e) {
+			//eslint-disable-next-line
+			console.log(e);
+			return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image for campaign icon');
+		}
+
+		try {
+			const getPreviousCampaignLogoResponse = await promiseQuery(
+				connection,
+				`
+					SELECT
+						campaignLogoURL
+					FROM
+						campaign
+					WHERE
+						campaign.campaignID = :campaignID
+				`,
+				{ campaignID }
+			);
+
+			const prevCampaignLogoURL = getPreviousCampaignLogoResponse[0].campaignLogoURL;
+
+			if (prevCampaignLogoURL) {
+				await deleteImage(prevCampaignLogoURL);
+			}
+		} catch (e) {
+			//eslint-disable-next-line
+			console.log(e);
+			// TODO: Email creator informing them of cloudinary memory leak with link to url (e.url) if it exists
+		}
+	}
+
+	const updateStatement = [
+		imageUrl ? 'campaignLogoURL = :imageUrl' : null,
+		campaignTitle ? 'campaignTitle = :campaignTitle' : null,
+	].filter(str => str).join(',');
+
+	const results = await promiseQuery(
+		connection,
+		`
+			UPDATE campaign
+			SET
+				${updateStatement}
+			WHERE
+				campaignID = :campaignID
+		`,
+		{ campaignTitle, campaignID, imageUrl }
+	);
+
+	return {
+		changed: results.changedRows > 0,
 	};
 };
 

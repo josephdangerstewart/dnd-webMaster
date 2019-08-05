@@ -1,0 +1,51 @@
+@import '../../styles/colors.less';
+@import '../../styles/mixins.less';
+
+.container {
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+
+	.input-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		color: darken(@background-color-dark, 10%);
+		cursor: pointer;
+		transition: color .5s;
+
+		&:hover {
+			color: @text-color;
+		}
+
+		.icon {
+			margin: 12px 0;
+		}
+
+		.file-size-error {
+			font-size: 10pt;
+			margin-top: -10px;
+		}
+	}
+
+	.file-name-container {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: @text-color;
+
+		p {
+			margin: auto 0;
+		}
+
+		.button {
+			.with-button-styles(@text-color);
+			visibility: hidden;
+		}
+
+		&:hover .button {
+			visibility: visible;
+		}
+	}
+}

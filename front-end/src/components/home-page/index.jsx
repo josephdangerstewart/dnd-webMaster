@@ -64,6 +64,7 @@ export default class HomePage extends React.Component {
 				campaigns: campaigns.map(item => ({
 					title: item.campaignTitle,
 					id: item.campaignID,
+					imageUrl: item.campaignLogoURL,
 				})),
 			});
 		} catch (err) {
@@ -85,6 +86,7 @@ export default class HomePage extends React.Component {
 				<Content
 					navigateToCampaign={this.navigateToCampaign}
 					campaigns={campaigns}
+					loadCampaigns={this.loadCampaigns}
 				/>
 			</div>
 		);

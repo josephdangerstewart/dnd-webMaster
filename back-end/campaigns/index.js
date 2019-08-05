@@ -1,3 +1,5 @@
+import multer from 'multer';
+
 import {
 	asRouteFunction,
 } from '../utility';
@@ -6,6 +8,8 @@ import * as campaignRoutes from './CampaignsController';
 import * as characterRoutes from './characters/CharacterController';
 import * as notesRoutes from './notes/NotesController';
 import * as linkedPlaylistRoutes from './music/LinkedPlaylistController';
+
+const uploader = multer({ storage: multer.memoryStorage() });
 
 export default app => {
 	app.route('/api/campaigns/:campaignID/exists')
@@ -140,6 +144,13 @@ export default app => {
 		.post(
 			campaignRoutes.userCanAccessCampaign,
 			asRouteFunction(campaignRoutes.saveLayoutConfiguration, true)
+		);
+
+	app.route('/api/campaigns/:campaignID/update')
+		.post(
+			campaignRoutes.userCanAccessCampaign,
+			uploader.single('image'),
+			asRouteFunction(campaignRoutes.updateCampaignDetails, true)
 		);
 
 	app.route('/api/campaigns')

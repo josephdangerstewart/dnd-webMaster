@@ -1,4 +1,5 @@
 @import '../../styles/colors.less';
+@import '../../styles/mixins.less';
 
 .dialog-root {
 	width: 100%;
@@ -14,4 +15,17 @@
 		padding: 10px;
 		border-radius: 4px;
 	}
+}
+
+.button-container {
+	display: flex;
+	justify-content: space-between;
+
+	.button-minimal {
+		.with-button-styles(@text-color) !important;
+	}
+}
+
+.children-container {
+	margin-bottom: 20px;
 }

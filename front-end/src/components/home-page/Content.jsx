@@ -17,6 +17,8 @@ import {
 } from '@blueprintjs/core';
 
 import Carousel from './carousel';
+import CampaignNameModal from '../campaign-name-modal';
+import CampaignIconModal from '../campaign-icon-modal';
 
 import styles from './styles.less';
 
@@ -24,13 +26,49 @@ export default class Content extends React.Component {
 	static propTypes = {
 		navigateToCampaign: PropTypes.func.isRequired,
 		campaigns: PropTypes.array.isRequired,
+		loadCampaigns: PropTypes.func.isRequired,
 	}
+
+	state = {
+		campaignNameModalOpen: false,
+		campaignIconModalOpen: false,
+		focusedCampaignID: 0,
+		focusedCampaignName: '',
+	}
+
+	renderCampaignsCarouselItemMenu = campaign => (
+		<Menu>
+			<MenuItem
+				text="Rename this campaign"
+				onClick={() => this.setState({
+					campaignNameModalOpen: true,
+					focusedCampaignID: campaign.id,
+					focusedCampaignName: campaign.title,
+				})}
+			/>
+			<MenuItem
+				text="Change icon"
+				onClick={() => this.setState({
+					campaignIconModalOpen: true,
+					focusedCampaignID: campaign.id,
+					focusedCampaignName: campaign.title,
+				})}
+			/>
+		</Menu>
+	)
 
 	render() {
 		const {
 			navigateToCampaign,
 			campaigns,
+			loadCampaigns,
 		} = this.props;
+		const {
+			focusedCampaignID,
+			focusedCampaignName,
+			campaignNameModalOpen,
+			campaignIconModalOpen,
+		} = this.state;
 
 		return (
 			<div className={styles.content}>
@@ -74,6 +112,20 @@ export default class Content extends React.Component {
 					defaultImage="/svg/d20.svg"
 					onItemSelected={navigateToCampaign}
 					noItemsText="No Campaigns"
+					renderItemMenu={this.renderCampaignsCarouselItemMenu}
+				/>
+				<CampaignNameModal
+					previousName={focusedCampaignName}
+					campaignID={focusedCampaignID}
+					isOpen={campaignNameModalOpen}
+					onClose={() => this.setState({ campaignNameModalOpen: false })}
+					onRefresh={loadCampaigns}
+				/>
+				<CampaignIconModal
+					campaignID={focusedCampaignID}
+					isOpen={campaignIconModalOpen}
+					onClose={() => this.setState({ campaignIconModalOpen: false })}
+					onRefresh={loadCampaigns}
 				/>
 			</div>
 		);
