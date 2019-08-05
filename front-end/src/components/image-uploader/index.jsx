@@ -42,6 +42,7 @@ export default class ImageUploaderComponent extends React.Component {
 		if (file && file.size > MAX_FILE_UPLOAD_SIZE) {
 			this.clearInput();
 			this.setState({ showFileSizeError: true });
+			return;
 		}
 
 		this.setState({
