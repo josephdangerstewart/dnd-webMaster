@@ -20,7 +20,7 @@ export default class ActionModal extends React.Component {
 		title: PropTypes.string.isRequired,
 		submitButtonText: PropTypes.string,
 		cancelButtonText: PropTypes.string,
-		maxWidth: PropTypes.oneOf([
+		maxWidth: PropTypes.oneOfType([
 			PropTypes.number,
 			PropTypes.string,
 		]),

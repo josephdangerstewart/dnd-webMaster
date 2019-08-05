@@ -15,7 +15,7 @@ export default class CampaignNameModal extends React.Component {
 	static propTypes = {
 		isOpen: PropTypes.bool.isRequired,
 		onClose: PropTypes.func.isRequired,
-		campaignID: PropTypes.oneOf([
+		campaignID: PropTypes.oneOfType([
 			PropTypes.string,
 			PropTypes.number,
 		]).isRequired,

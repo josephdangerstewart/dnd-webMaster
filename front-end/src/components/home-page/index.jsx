@@ -64,6 +64,7 @@ export default class HomePage extends React.Component {
 				campaigns: campaigns.map(item => ({
 					title: item.campaignTitle,
 					id: item.campaignID,
+					imageUrl: item.campaignLogoURL,
 				})),
 			});
 		} catch (err) {

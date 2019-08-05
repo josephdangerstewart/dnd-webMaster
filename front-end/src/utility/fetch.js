@@ -38,3 +38,20 @@ export const post = (path, body) => (
 			return response.json();
 		})
 );
+
+export const postForm = (path, form) => (
+	fetch(
+		path,
+		{
+			credentials: 'include',
+			method: 'POST',
+			body: form,
+		}
+	)
+		.then(response => {
+			if (response.status !== 200) {
+				throw new Error(response.statusText);
+			}
+			return response.json();
+		})
+);

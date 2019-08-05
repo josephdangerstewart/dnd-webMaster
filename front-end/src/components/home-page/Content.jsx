@@ -18,6 +18,7 @@ import {
 
 import Carousel from './carousel';
 import CampaignNameModal from '../campaign-name-modal';
+import CampaignIconModal from '../campaign-icon-modal';
 
 import styles from './styles.less';
 
@@ -47,6 +48,11 @@ export default class Content extends React.Component {
 			/>
 			<MenuItem
 				text="Change icon"
+				onClick={() => this.setState({
+					campaignIconModalOpen: true,
+					focusedCampaignID: campaign.id,
+					focusedCampaignName: campaign.title,
+				})}
 			/>
 		</Menu>
 	)
@@ -61,6 +67,7 @@ export default class Content extends React.Component {
 			focusedCampaignID,
 			focusedCampaignName,
 			campaignNameModalOpen,
+			campaignIconModalOpen,
 		} = this.state;
 
 		return (
@@ -112,6 +119,12 @@ export default class Content extends React.Component {
 					campaignID={focusedCampaignID}
 					isOpen={campaignNameModalOpen}
 					onClose={() => this.setState({ campaignNameModalOpen: false })}
+					onRefresh={loadCampaigns}
+				/>
+				<CampaignIconModal
+					campaignID={focusedCampaignID}
+					isOpen={campaignIconModalOpen}
+					onClose={() => this.setState({ campaignIconModalOpen: false })}
 					onRefresh={loadCampaigns}
 				/>
 			</div>

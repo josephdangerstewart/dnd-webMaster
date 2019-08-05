@@ -18,7 +18,7 @@ export default class SaveLayoutDialog extends React.Component {
 	static propTypes = {
 		open: PropTypes.bool.isRequired,
 		children: PropTypes.node.isRequired,
-		maxWidth: PropTypes.oneOf([
+		maxWidth: PropTypes.oneOfType([
 			PropTypes.string,
 			PropTypes.number,
 		]),
