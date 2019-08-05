@@ -8,6 +8,8 @@
 import STATUS_CODES from 'http-status-codes';
 import mysql from 'mysql';
 import cloudinary from 'cloudinary';
+import DataURI from 'datauri';
+import path from 'path';
 
 let databaseCredentials;
 try {
@@ -26,7 +28,7 @@ try {
 	cloudinaryCredentials = require('./cloudinary-api.json');
 } catch (err) {
 	cloudinaryCredentials = {
-		api: '',
+		key: '',
 		secret: '',
 	};
 }
@@ -38,9 +40,14 @@ Array.prototype.asyncMap = function(callback) {
 // Configure cloudinary with campaign buddy credentials
 cloudinary.config({ 
 	cloud_name: 'josephdangerstewart', 
-	api_key: cloudinaryCredentials.api, 
+	api_key: cloudinaryCredentials.key, 
 	api_secret: cloudinaryCredentials.secret,
 });
+
+const dataUri = new DataURI();
+
+const extractDataUri = file => 
+	dataUri.format(path.extname(file.originalname).toString(), file.buffer);
 
 /**
  * @description This is a utility function for the mysql module that typecasts the MySQL BIT
@@ -185,15 +192,22 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
  */
 export const uploadImage = async image => 
 	new Promise((resolve, reject) => {
-		cloudinary.v2.uploader.upload_stream(
-			{ resource_type: 'raw', folder: 'campaign-buddy/uploads' }, 
+		cloudinary.v2.uploader.upload(
+			extractDataUri(image).content,
+			{
+				folder: 'campaign-buddy/uploads',
+				quality: 'auto:eco',
+				width: 150,
+				height: 150,
+				crop: 'fit',
+			}, 
 			(error, result) => {
 				if (error) {
 					return reject(error);
 				}
 				return resolve(result.url);
 			}
-		).end(image.buffer);
+		);
 	});
 
 /*

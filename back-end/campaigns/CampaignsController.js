@@ -35,7 +35,8 @@ export const getAllCampaigns = async (path, query, user, connection) => {
 		`
 			SELECT 
 				campaign.campaignID,
-				campaignTitle
+				campaignTitle,
+				campaignLogoURL
 			FROM
 				campaignlist JOIN
 				campaign ON campaign.campaignID = campaignlist.campaignID
@@ -101,12 +102,14 @@ export const updateCampaignDetails = async (path, query, user, connection, body,
 		try {
 			imageUrl = await uploadImage(file);
 		} catch (e) {
+			//eslint-disable-next-line
+			console.log(e);
 			return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image for campaign icon');
 		}
 	}
 
 	const updateStatement = [
-		imageUrl ? 'imageUrl = :imageUrl' : null,
+		imageUrl ? 'campaignLogoURL = :imageUrl' : null,
 		campaignTitle ? 'campaignTitle = :campaignTitle' : null,
 	].filter(str => str).join(',');
 
