@@ -8,6 +8,8 @@ import {
 	ERROR_CODES,
 } from '../utility';
 
+const MAX_FILE_UPLOAD_SIZE = 524288000;
+
 /**
  * @description This is a piece of express middleware that checks if a user has
  * access to the given campaign, if they do have access, the request continues as
@@ -100,6 +102,10 @@ export const updateCampaignDetails = async (path, query, user, connection, body,
 	} = path;
 
 	if (!imageUrl && file) {
+		if (file.size > MAX_FILE_UPLOAD_SIZE) {
+			return new ServerError(ERROR_CODES.BAD_REQUEST, 'Max file upload size is 500 MB');
+		}
+
 		try {
 			imageUrl = await uploadImage(file);
 		} catch (e) {
