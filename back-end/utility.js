@@ -210,6 +210,33 @@ export const uploadImage = async image =>
 		);
 	});
 
+export const deleteImage = async url =>
+	new Promise((resolve, reject) => {
+		const match = /.+\/uploads\/(.+)\.png/g.exec(url);
+		if (!match && url.startsWith('https://res.cloudinary.com/josephdangerstewart')) {
+			reject({
+				error: 'Non-valid cloudinary url',
+				url,
+			});
+		} else if (!match) {
+			resolve();
+		}
+
+		cloudinary.v2.uploader.destroy(
+			`campaign-buddy/uploads/${match[1]}`,
+			(result, error) => {
+				if (error) {
+					reject({
+						error,
+						url,
+					});
+				}
+
+				resolve();
+			}
+		);
+	});
+
 /*
  * A custom error class for quietly throwing errors
  */

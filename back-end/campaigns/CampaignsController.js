@@ -3,6 +3,7 @@ import {
 	getSQLConnection,
 	unauthorizedError,
 	uploadImage,
+	deleteImage,
 	ServerError,
 	ERROR_CODES,
 } from '../utility';
@@ -105,6 +106,31 @@ export const updateCampaignDetails = async (path, query, user, connection, body,
 			//eslint-disable-next-line
 			console.log(e);
 			return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image for campaign icon');
+		}
+
+		try {
+			const getPreviousCampaignLogoResponse = await promiseQuery(
+				connection,
+				`
+					SELECT
+						campaignLogoURL
+					FROM
+						campaign
+					WHERE
+						campaign.campaignID = :campaignID
+				`,
+				{ campaignID }
+			);
+
+			const prevCampaignLogoURL = getPreviousCampaignLogoResponse[0].campaignLogoURL;
+
+			if (prevCampaignLogoURL) {
+				await deleteImage(prevCampaignLogoURL);
+			}
+		} catch (e) {
+			//eslint-disable-next-line
+			console.log(e);
+			// TODO: Email creator informing them of cloudinary memory leak with link to url (e.url) if it exists
 		}
 	}
 
