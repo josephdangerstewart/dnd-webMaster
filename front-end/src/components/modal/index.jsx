@@ -22,6 +22,7 @@ export default class SaveLayoutDialog extends React.Component {
 			PropTypes.string,
 			PropTypes.number,
 		]),
+		className: PropTypes.string,
 	}
 	
 	render() {
@@ -29,6 +30,7 @@ export default class SaveLayoutDialog extends React.Component {
 			open,
 			children,
 			maxWidth,
+			className,
 			...rest
 		} = this.props;
 
@@ -42,7 +44,8 @@ export default class SaveLayoutDialog extends React.Component {
 					<div
 						className={classNames(
 							styles.dialogCard,
-							Classes.ELEVATION_3
+							Classes.ELEVATION_3,
+							className
 						)}
 						style={{ maxWidth }}
 					>
