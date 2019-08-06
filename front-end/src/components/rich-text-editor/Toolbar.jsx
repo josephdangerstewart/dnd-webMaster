@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-export default () => (
-	<div id="toolbar">
+const Toolbar = ({ id }) => (
+	<div id={id}>
 		<select className="ql-header" defaultValue={''} onChange={e => e.persist()}>
 			<option value="1"></option>
 			<option value="2"></option>
@@ -11,3 +12,9 @@ export default () => (
 		<button className="ql-italic"></button>
 	</div>
 );
+
+Toolbar.propTypes = {
+	id: PropTypes.string.isRequired,
+};
+
+export default Toolbar;
