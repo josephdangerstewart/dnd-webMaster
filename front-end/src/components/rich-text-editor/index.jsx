@@ -8,6 +8,8 @@ import Toolbar from './Toolbar';
 import Mention from './mention/Mention';
 import getMentionBlot from './mention/MentionBlot';
 
+import generateId from 'Utility/generateId';
+
 const MentionBlot = getMentionBlot(Quill);
 
 Quill.register('modules/mention', Mention);
@@ -23,6 +25,11 @@ export default class RichTextEditor extends React.Component {
 
 	state = {
 		value: '',
+	}
+
+	constructor(props) {
+		super(props);
+		this.toolbarId = generateId('rte-toolbar');
 	}
 
 	handleChange = value => {
@@ -85,14 +92,14 @@ export default class RichTextEditor extends React.Component {
 
 		return (
 			<div onClick={this.handleClick}>
-				<Toolbar />
+				<Toolbar id={this.toolbarId} />
 				<ReactQuill
 					value={propValue === undefined ? stateValue : propValue}
 					onChange={this.handleChange}
 					theme="bubble"
 					modules={{
 						toolbar: {
-							container: '#toolbar',
+							container: `#${this.toolbarId}`,
 						},
 						mention: {
 							container: '.ql-container',
