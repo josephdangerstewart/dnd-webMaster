@@ -23,6 +23,7 @@ export default class SaveLayoutDialog extends React.Component {
 			PropTypes.number,
 		]),
 		className: PropTypes.string,
+		onClose: PropTypes.func,
 	}
 	
 	render() {
@@ -31,6 +32,7 @@ export default class SaveLayoutDialog extends React.Component {
 			children,
 			maxWidth,
 			className,
+			onClose,
 			...rest
 		} = this.props;
 
@@ -38,6 +40,7 @@ export default class SaveLayoutDialog extends React.Component {
 			<Overlay
 				isOpen={open}
 				backdropClassName={styles.dialogRoot}
+				onClose={onClose}
 				{...rest}
 			>
 				<div className={styles.dialogRoot}>
