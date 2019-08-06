@@ -47,6 +47,7 @@ export default class ActionModal extends React.Component {
 			<Modal
 				open={open}
 				maxWidth={maxWidth}
+				onClose={onCancel}
 				{...rest}
 			>
 				<Title fontSize={24}>{title}</Title>

@@ -12,6 +12,7 @@ import {
 } from '@blueprintjs/core';
 
 import NumericInput from '../../../calculator-input';
+import ImagePickerModal from '../../../modal/ImagePickerModal';
 
 import styles from './styles.less';
 
@@ -26,6 +27,32 @@ export default class Appearance extends React.Component {
 		imageUrl: PropTypes.string,
 		description: PropTypes.string,
 	}
+
+	// It's okay to store this in state because the panels can't be 
+	// rearranged while the modal is open
+	state = {
+		imagePickerModalOpen: false,
+		loading: false,
+	}
+
+	handleImagePickerSubmit = (file, url) => {
+		const { onPropertyChanged } = this.props;
+
+		if (url) {
+			onPropertyChanged('avatarURL')(url);
+			this.setState({ imagePickerModalOpen: false });
+		} else if (file) {
+			this.setState(
+				{
+					loading: true,
+				},
+				() => onPropertyChanged('avatar')(
+					file,
+					() => this.setState({ loading: false, imagePickerModalOpen: false })
+				)
+			);
+		}
+	}
 	
 	render() {
 		const {
@@ -38,11 +65,15 @@ export default class Appearance extends React.Component {
 			description,
 			onPropertyChanged,
 		} = this.props;
+		const { imagePickerModalOpen, loading } = this.state;
 
 		return (
 			<div className={styles.root}>
 				<div className={styles.row}>
-					<div className={styles.imageContainer}>
+					<div
+						className={styles.imageContainer}
+						onClick={() => this.setState({ imagePickerModalOpen: true })}
+					>
 						{imageUrl?
 							<img className={styles.image} src={imageUrl} />
 							:
@@ -156,6 +187,13 @@ export default class Appearance extends React.Component {
 					fill
 					className={styles.description}
 					placeholder="Physcial Description"
+				/>
+				<ImagePickerModal
+					open={imagePickerModalOpen}
+					onClose={() => this.setState({ imagePickerModalOpen: false })}
+					onSubmit={this.handleImagePickerSubmit}
+					allowUrl
+					loading={loading}
 				/>
 			</div>
 		);

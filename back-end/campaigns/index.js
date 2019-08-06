@@ -53,6 +53,7 @@ export default app => {
 		.post(
 			campaignRoutes.userCanAccessCampaign,
 			characterRoutes.characterBelongsToCampaign,
+			uploader.single('image'),
 			asRouteFunction(characterRoutes.updateCharacter, true)
 		);
 

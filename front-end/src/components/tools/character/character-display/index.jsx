@@ -157,7 +157,7 @@ export default class CharacterDisplay extends React.Component {
 					key={section}
 				>
 					<Appearance
-						imageUrl={character.avatarUrl}
+						imageUrl={character.avatarURL}
 						onPropertyChanged={onPropertyChanged}
 						age={character.age}
 						skinDesc={character.skinDesc}

@@ -7,7 +7,7 @@ import Settings from './tool-settings';
 
 import { displayError } from '../../toast';
 
-import { get, post } from 'Utility/fetch';
+import { get, post, postForm } from 'Utility/fetch';
 import debounce from 'Utility/debounce';
 
 // If settings.orderings is not returned from the server, set a blank one using this default
@@ -156,8 +156,34 @@ export default class CharacterTool extends ToolBase {
 		}));
 	}
 
-	onPropertyChanged = identifier => change => {
+	handleUploadAvatarImage = async (file, callback) => {
+		const { campaignID } = this.props;
+		const { character } = this.state;
+
+		const formData = new FormData();
+		formData.append('image', file);
+		formData.append('field', 'avatar');
+
+		try {
+			await postForm(
+				`/api/campaigns/${campaignID}/characters/${character.characterID}`,
+				formData
+			);
+		} catch (err) {
+			displayError('Could not upload character avatar');
+		}
+
+		callback();
+		this.loadCharacter(character.characterID);
+	}
+
+	onPropertyChanged = identifier => (change, callback) => {
 		const map = identifier.split('.');
+
+		if (identifier === 'avatar') {
+			this.handleUploadAvatarImage(change, callback);
+			return;
+		}
 
 		this.setState(({ character }) => {
 			let cur = character;
