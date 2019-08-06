@@ -5,6 +5,8 @@ import {
 	serverError,
 	ServerError,
 	ERROR_CODES,
+	uploadImage,
+	deleteImage,
 } from '../../utility';
 
 import * as spellsController from './CharacterSpellsController';
@@ -188,7 +190,7 @@ export const getCharacter = async (path, query, user, connection) => {
 /**
  * @description Updates a character in the database
  */
-export const updateCharacter = async (path, query, user, connection, body) => {
+export const updateCharacter = async (path, query, user, connection, body, files, file) => {
 	const { characterID } = path;
 	const {
 		field,
@@ -232,6 +234,49 @@ export const updateCharacter = async (path, query, user, connection, body) => {
 				WHERE characterID = :characterID
 			`,
 			{ value, characterID }
+		);
+		return {
+			reload: true,
+		};
+	} else if (field === 'avatar' && file) {
+		let url;
+		try {
+			url = await uploadImage(file);
+		} catch (err) {
+			return new ServerError(ERROR_CODES.INTERNAL_SERVER_ERROR, 'Could not upload image to cloudinary');
+		}
+
+		try {
+			const getPrevAvatarURLResponse = await promiseQuery(
+				connection,
+				`
+					SELECT avatarURL
+					FROM \`character\`
+					WHERE characterID = :characterID AND NOT isDeleted = 1
+				`,
+				{ characterID }
+			);
+			if (getPrevAvatarURLResponse[0] && getPrevAvatarURLResponse[0].avatarURL) {
+				await deleteImage(getPrevAvatarURLResponse[0].avatarURL);
+			}
+		} catch (err) {
+			if (err.url) {
+				//eslint-disable-next-line
+				console.log(`Bad cloudinary url: ${err.url}`);
+			} else {
+				//eslint-disable-next-line
+				console.log(err);
+			}
+		}
+
+		await promiseQuery(
+			connection,
+			`
+				UPDATE \`character\`
+				SET avatarURL = :url
+				WHERE characterID = :characterID AND NOT isDeleted = 1
+			`,
+			{ characterID, url }
 		);
 		return {
 			reload: true,
