@@ -83,6 +83,7 @@ export default class NotesTool extends ToolBase {
 				view: 'editor',
 			}, () => {
 				this.setTabName(note.noteTitle || 'Notes');
+
 				if (note.folderID) {
 					this.navigateToFolderID(note.folderID);
 				}
