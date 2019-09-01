@@ -43,6 +43,8 @@ export default class NotesTool extends ToolBase {
 			this.setState({
 				note,
 				view: 'editor',
+			}, () => {
+				this.setTabName(note.noteTitle || 'Notes');
 			});
 		} catch (err) {
 			displayError('There was an error loading your note!');
@@ -52,6 +54,8 @@ export default class NotesTool extends ToolBase {
 	onBack = () => {
 		this.setState({
 			view: 'list',
+		}, () => {
+			this.setTabName('Notes');
 		});
 	}
 
@@ -64,12 +68,22 @@ export default class NotesTool extends ToolBase {
 			savingNote: true,
 		}), () => {
 			if (property === 'noteTitle') {
+				const { note: { noteTitle } } = this.state;
 				this.postTitle();
+				this.setTabName(noteTitle || 'Notes');
 			} else if (property === 'noteContent') {
 				this.postNoteContent();
 			}
 		});
 	}
+
+	setTabName = debounce(
+		tabName => {
+			const { setTabName } = this.props;
+			setTabName(tabName);
+		},
+		250
+	)
 
 	postTitle = debounce(
 		async () => {
