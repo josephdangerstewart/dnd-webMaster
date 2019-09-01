@@ -72,41 +72,39 @@ export const getAllNotes = async (path, query, user, connection) => {
 		{ campaignID, folderID }
 	);
 
-	let currentFolder = {
-		folderName: '',
-		noteFolderID: null,
-		parentID: null,
-	};
-
-	if (folderID) {
-		const currentFolderQueryResults = await promiseQuery(
-			connection,
-			`
-				SELECT folderName, noteFolderID, parentID
-				FROM
-					notefolder
-				WHERE
-					noteFolderID = :folderID
-						AND
-					campaignID = :campaignID
-						AND
-					isDeleted = 0
-			`,
-			{ folderID, campaignID }
-		);
-		
-		if (currentFolderQueryResults.length !== 1) {
-			throw new Error('The folder you are looking for does not exist');
-		}
-
-		currentFolder = currentFolderQueryResults[0];
-	}
-
 	return {
 		folders,
 		notes,
-		currentFolder,
 	};
+};
+
+/**
+ * @description Gets a folder by it's folder id
+ */
+export const getFolder = async (path, query, user, connection) => {
+	const { campaignID, folderID } = path;
+
+	const currentFolderQueryResults = await promiseQuery(
+		connection,
+		`
+			SELECT folderName, noteFolderID, parentID
+			FROM
+				notefolder
+			WHERE
+				noteFolderID = :folderID
+					AND
+				campaignID = :campaignID
+					AND
+				isDeleted = 0
+		`,
+		{ folderID, campaignID }
+	);
+	
+	if (currentFolderQueryResults.length !== 1) {
+		return {};
+	}
+
+	return currentFolderQueryResults[0] || {};
 };
 
 /**

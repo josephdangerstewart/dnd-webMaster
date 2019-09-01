@@ -18,9 +18,10 @@ export default class NotesTool extends ToolBase {
 		},
 		noteID: 0,
 		savingNote: false,
+		currentFolder: {},
 	}
 
-	componentDidUpdate = () => {
+	componentDidUpdate = async () => {
 		const { defaultNoteID } = this.state;
 
 		if (defaultNoteID || defaultNoteID === 0) {
@@ -45,6 +46,9 @@ export default class NotesTool extends ToolBase {
 				view: 'editor',
 			}, () => {
 				this.setTabName(note.noteTitle || 'Notes');
+				if (note.folderID) {
+					this.navigateToFolderID(note.folderID);
+				}
 			});
 		} catch (err) {
 			displayError('There was an error loading your note!');
@@ -55,7 +59,8 @@ export default class NotesTool extends ToolBase {
 		this.setState({
 			view: 'list',
 		}, () => {
-			this.setTabName('Notes');
+			const { currentFolder } = this.state;
+			this.setTabName(currentFolder.folderName || 'Notes');
 		});
 	}
 
@@ -126,15 +131,23 @@ export default class NotesTool extends ToolBase {
 		);
 	}
 
-	clearDefaultFolderID = callback => {
-		this.setState({
-			defaultFolderID: null,
-		}, callback);
+	navigateToFolderID = async (folderID, setTabName) => {
+		try {
+			const { campaignID } = this.props;
+			const currentFolder = await get(`/api/campaigns/${campaignID}/notes/folders/${folderID}`);
+			this.setState({ currentFolder });
+
+			if (setTabName) {
+				this.setTabName(currentFolder.folderName || 'Notes');
+			}
+		} catch (err) {
+			displayError('Could not navigate to folder');
+		}
 	}
 	
 	render() {
 		const { campaignID, insertPaneIntoPanel } = this.props;
-		const { view, note, savingNote, defaultFolderID } = this.state;
+		const { view, note, savingNote, currentFolder } = this.state;
 
 		if (view === 'editor') {
 			return (
@@ -154,8 +167,8 @@ export default class NotesTool extends ToolBase {
 			<NotesList
 				campaignID={campaignID}
 				openNote={this.openNote}
-				defaultFolderID={defaultFolderID}
-				clearDefaultFolderID={this.clearDefaultFolderID}
+				currentFolder={currentFolder}
+				navigateToFolderID={this.navigateToFolderID}
 			/>
 		);
 	}

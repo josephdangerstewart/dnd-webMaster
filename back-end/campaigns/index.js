@@ -86,6 +86,12 @@ export default app => {
 			campaignRoutes.userCanAccessCampaign,
 			asRouteFunction(notesRoutes.createNewFolder, true)
 		);
+	
+	app.route('/api/campaigns/:campaignID/notes/folders/:folderID')
+		.get(
+			campaignRoutes.userCanAccessCampaign,
+			asRouteFunction(notesRoutes.getFolder, true)
+		);
 
 	app.route('/api/campaigns/:campaignID/notes/folders/:folderID')
 		.delete(

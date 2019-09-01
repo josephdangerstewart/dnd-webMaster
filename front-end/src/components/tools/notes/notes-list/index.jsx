@@ -24,16 +24,14 @@ export default class NotesList extends React.Component {
 	static propTypes = {
 		campaignID: PropTypes.number.isRequired,
 		openNote: PropTypes.func.isRequired,
-		clearDefaultFolderID: PropTypes.func.isRequired,
-		defaultFolderID: PropTypes.number,
+		currentFolder: PropTypes.object.isRequired,
+		navigateToFolderID: PropTypes.func.isRequired,
 	}
 
 	state = {
 		results: [],
-		currentFolder: {},
 		loading: true,
 		creatingNote: false,
-		folderID: null,
 		creatingFolder: false,
 		nameFolderModalOpen: false,
 		renameFolderModalOpen: false,
@@ -44,24 +42,24 @@ export default class NotesList extends React.Component {
 		this.loadNotes();
 	}
 
-	componentDidUpdate() {
-		const { defaultFolderID, clearDefaultFolderID } = this.props;
+	componentDidUpdate(prevProps) {
+		const { currentFolder } = this.props;
+		const { currentFolder: oldFolder } = prevProps;
 
-		if (defaultFolderID || defaultFolderID === 0) {
-			clearDefaultFolderID(() => {
-				this.setState({
-					folderID: defaultFolderID,
-				}, this.loadNotes);
-			});
-		}
+		if (currentFolder.noteFolderID !== oldFolder.noteFolderID)
+			this.loadNotes();
 	}
 
 	loadNotes = async () => {
 		try {
-			const { campaignID } = this.props;
-			const { folderID } = this.state;
+			const { campaignID, currentFolder } = this.props;
 
-			const apiResponse = await get(`/api/campaigns/${campaignID}/notes${folderID ? `?folderID=${folderID}` : ''}`);
+			const apiResponse = await get(
+				`/api/campaigns/${campaignID}/notes${
+					currentFolder.noteFolderID ?
+						`?folderID=${currentFolder.noteFolderID}`
+						: ''
+				}`);
 
 			const results = [
 				...apiResponse.folders.map(folder => ({ ...folder, name: folder.folderName, type: 'folder' })),
@@ -70,7 +68,6 @@ export default class NotesList extends React.Component {
 
 			this.setState({
 				results,
-				currentFolder: apiResponse.currentFolder,
 				loading: false,
 			});
 		} catch (err) {
@@ -83,10 +80,9 @@ export default class NotesList extends React.Component {
 			creatingNote: true,
 		}, async () => {
 			try {
-				const { campaignID } = this.props;
-				const { folderID } = this.state;
+				const { campaignID, currentFolder } = this.props;
 
-				await post(`/api/campaigns/${campaignID}/notes`, { folderID });
+				await post(`/api/campaigns/${campaignID}/notes`, { folderID: currentFolder.noteFolderID });
 				useFeature('create_note', 'notes');
 				this.setState({
 					creatingNote: false,
@@ -98,11 +94,8 @@ export default class NotesList extends React.Component {
 	}
 
 	handleBack = () => {
-		const { currentFolder } = this.state;
-
-		this.setState({
-			folderID: currentFolder.parentID,
-		}, this.loadNotes);
+		const { currentFolder, navigateToFolderID } = this.props;
+		navigateToFolderID(currentFolder.parentID, true);
 	}
 
 	handleNewFolder = title => {
@@ -111,10 +104,9 @@ export default class NotesList extends React.Component {
 			nameFolderModalOpen: false,
 		}, async () => {
 			try {
-				const { campaignID } = this.props;
-				const { folderID } = this.state;
+				const { campaignID, currentFolder } = this.props;
 
-				await post(`/api/campaigns/${campaignID}/notes/folders`, { parentID: folderID, title });
+				await post(`/api/campaigns/${campaignID}/notes/folders`, { parentID: currentFolder.noteFolderID, title });
 				useFeature('create_folder');
 				this.setState({
 					creatingFolder: false,
@@ -137,7 +129,7 @@ export default class NotesList extends React.Component {
 	}
 
 	moveUpOneDirectory = async body => {
-		const { currentFolder } = this.state;
+		const { currentFolder } = this.props;
 
 		try {
 			const { campaignID } = this.props;
@@ -183,14 +175,12 @@ export default class NotesList extends React.Component {
 	}
 
 	handleItemClick = item => {
-		const { openNote } = this.props;
+		const { openNote, navigateToFolderID } = this.props;
 
 		if (item.type === 'note') {
 			openNote(item.noteID);
 		} else {
-			this.setState({
-				folderID: item.noteFolderID,
-			}, this.loadNotes);
+			navigateToFolderID(item.noteFolderID, true);
 		}
 	}
 
@@ -231,12 +221,13 @@ export default class NotesList extends React.Component {
 	}
 
 	render() {
+		const { currentFolder } = this.props;
+
 		const {
 			results,
 			loading,
 			creatingNote,
 			creatingFolder,
-			currentFolder,
 			nameFolderModalOpen,
 			renameFolderModalOpen,
 		} = this.state;
