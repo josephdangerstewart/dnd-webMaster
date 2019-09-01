@@ -23,7 +23,7 @@ export default class NotesTool extends ToolBase {
 		loadingNoteList: false,
 	}
 
-	componentDidUpdate = async () => {
+	componentDidUpdate = () => {
 		const { defaultNoteID } = this.state;
 
 		if (defaultNoteID || defaultNoteID === 0) {
@@ -36,6 +36,7 @@ export default class NotesTool extends ToolBase {
 	}
 
 	componentDidMount = () => {
+		super.componentDidMount();
 		this.loadNotes();
 	}
 
