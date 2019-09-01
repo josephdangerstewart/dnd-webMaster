@@ -108,7 +108,10 @@ export default class Spells extends React.Component {
 					sortingColumn={sortingColumn}
 					sortingDirection={sortingDirection}
 					handleSortChange={handleSortingChange}
-					items={spells}
+					items={search ?
+						spells.filter(spell => spell.spellName.includes(search)) :
+						spells
+					}
 				/>
 			</div>
 		);
