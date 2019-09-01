@@ -97,7 +97,10 @@ export default class Equipment extends React.Component {
 					sortingColumn={sortingColumn}
 					sortingDirection={sortingDirection}
 					handleSortChange={handleSortingChange}
-					items={equipment}
+					items={search ?
+						equipment.filter(item => item.equipmentName.includes(search)) :
+						equipment
+					}
 				/>
 			</div>
 		);
