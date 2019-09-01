@@ -19,6 +19,8 @@ export default class NotesTool extends ToolBase {
 		noteID: 0,
 		savingNote: false,
 		currentFolder: {},
+		noteListResults: [],
+		loadingNoteList: false,
 	}
 
 	componentDidUpdate = async () => {
@@ -31,6 +33,40 @@ export default class NotesTool extends ToolBase {
 				defaultNoteID: null,
 			}, this.loadNote);
 		}
+	}
+
+	componentDidMount = () => {
+		this.loadNotes();
+	}
+
+	loadNotes = () => {
+		this.setState({
+			loadingNoteList: true,
+		}, async () => {
+			try {
+				const { campaignID } = this.props;
+				const { currentFolder } = this.state;
+	
+				const apiResponse = await get(
+					`/api/campaigns/${campaignID}/notes${
+						currentFolder.noteFolderID ?
+							`?folderID=${currentFolder.noteFolderID}`
+							: ''
+					}`);
+	
+				const noteListResults = [
+					...apiResponse.folders.map(folder => ({ ...folder, name: folder.folderName, type: 'folder' })),
+					...apiResponse.notes.map(note => ({ ...note, name: note.noteTitle, type: 'note' })),
+				];
+	
+				this.setState({
+					noteListResults,
+					loadingNoteList: false,
+				});
+			} catch (err) {
+				displayError('There was an error retrieving your notes!');
+			}
+		});
 	}
 
 	loadNote = async () => {
@@ -135,7 +171,7 @@ export default class NotesTool extends ToolBase {
 		try {
 			const { campaignID } = this.props;
 			const currentFolder = await get(`/api/campaigns/${campaignID}/notes/folders/${folderID}`);
-			this.setState({ currentFolder });
+			this.setState({ currentFolder }, this.loadNotes);
 
 			if (setTabName) {
 				this.setTabName(currentFolder.folderName || 'Notes');
@@ -147,7 +183,7 @@ export default class NotesTool extends ToolBase {
 	
 	render() {
 		const { campaignID, insertPaneIntoPanel } = this.props;
-		const { view, note, savingNote, currentFolder } = this.state;
+		const { view, note, savingNote, currentFolder, loadingNoteList, noteListResults } = this.state;
 
 		if (view === 'editor') {
 			return (
@@ -169,6 +205,8 @@ export default class NotesTool extends ToolBase {
 				openNote={this.openNote}
 				currentFolder={currentFolder}
 				navigateToFolderID={this.navigateToFolderID}
+				loading={loadingNoteList}
+				results={noteListResults}
 			/>
 		);
 	}

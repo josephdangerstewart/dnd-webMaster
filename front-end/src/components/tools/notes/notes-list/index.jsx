@@ -13,7 +13,7 @@ import FolderListItem from '../folder-list-item';
 import NoteListItem from '../note-list-item';
 import FolderBackButton from '../folder-back-button';
 
-import { get, post, httpDelete } from 'Utility/fetch';
+import { post, httpDelete } from 'Utility/fetch';
 import classNames from 'Utility/classNames';
 import { useFeature } from 'Utility/gtag';
 import { displayError } from '../../../toast';
@@ -26,11 +26,12 @@ export default class NotesList extends React.Component {
 		openNote: PropTypes.func.isRequired,
 		currentFolder: PropTypes.object.isRequired,
 		navigateToFolderID: PropTypes.func.isRequired,
+		results: PropTypes.array.isRequired,
+		loading: PropTypes.array.isRequired,
+		loadNotes: PropTypes.func.isRequired,
 	}
 
 	state = {
-		results: [],
-		loading: true,
 		creatingNote: false,
 		creatingFolder: false,
 		nameFolderModalOpen: false,
@@ -38,55 +39,18 @@ export default class NotesList extends React.Component {
 		renameFolderID: 0,
 	}
 
-	componentDidMount() {
-		this.loadNotes();
-	}
-
-	componentDidUpdate(prevProps) {
-		const { currentFolder } = this.props;
-		const { currentFolder: oldFolder } = prevProps;
-
-		if (currentFolder.noteFolderID !== oldFolder.noteFolderID)
-			this.loadNotes();
-	}
-
-	loadNotes = async () => {
-		try {
-			const { campaignID, currentFolder } = this.props;
-
-			const apiResponse = await get(
-				`/api/campaigns/${campaignID}/notes${
-					currentFolder.noteFolderID ?
-						`?folderID=${currentFolder.noteFolderID}`
-						: ''
-				}`);
-
-			const results = [
-				...apiResponse.folders.map(folder => ({ ...folder, name: folder.folderName, type: 'folder' })),
-				...apiResponse.notes.map(note => ({ ...note, name: note.noteTitle, type: 'note' })),
-			];
-
-			this.setState({
-				results,
-				loading: false,
-			});
-		} catch (err) {
-			displayError('There was an error retrieving your notes!');
-		}
-	}
-
 	handleNewNote = () => {
 		this.setState({
 			creatingNote: true,
 		}, async () => {
 			try {
-				const { campaignID, currentFolder } = this.props;
+				const { campaignID, currentFolder, loadNotes } = this.props;
 
 				await post(`/api/campaigns/${campaignID}/notes`, { folderID: currentFolder.noteFolderID });
 				useFeature('create_note', 'notes');
 				this.setState({
 					creatingNote: false,
-				}, this.loadNotes);
+				}, loadNotes);
 			} catch (err) {
 				displayError('There was an error creating the note');
 			}
@@ -104,13 +68,13 @@ export default class NotesList extends React.Component {
 			nameFolderModalOpen: false,
 		}, async () => {
 			try {
-				const { campaignID, currentFolder } = this.props;
+				const { campaignID, currentFolder, loadNotes } = this.props;
 
 				await post(`/api/campaigns/${campaignID}/notes/folders`, { parentID: currentFolder.noteFolderID, title });
 				useFeature('create_folder');
 				this.setState({
 					creatingFolder: false,
-				}, this.loadNotes);
+				}, loadNotes);
 			} catch (err) {
 				displayError('There was an error creating the folder');
 			}
@@ -119,22 +83,22 @@ export default class NotesList extends React.Component {
 
 	moveIntoFolder = async (dest, body) => {
 		try {
-			const { campaignID } = this.props;
+			const { campaignID, loadNotes } = this.props;
 			await post(`/api/campaigns/${campaignID}/notes/folders/move-into/${dest}`, body);
 			useFeature('move_into_folder', 'notes');
-			this.loadNotes();
+			loadNotes();
 		} catch (err) {
 			displayError('Could not move item');
 		}
 	}
 
 	moveUpOneDirectory = async body => {
-		const { currentFolder } = this.props;
+		const { currentFolder, loadNotes } = this.props;
 
 		try {
 			const { campaignID } = this.props;
 			await post(`/api/campaigns/${campaignID}/notes/folders/move-into/${currentFolder.parentID || '0'}`, body);
-			this.loadNotes();
+			loadNotes();
 		} catch (err) {
 			displayError('Could not move item');
 		}
@@ -186,10 +150,10 @@ export default class NotesList extends React.Component {
 
 	deleteNote = async noteID => {
 		try {
-			const { campaignID } = this.props;
+			const { campaignID, loadNotes } = this.props;
 			await httpDelete(`/api/campaigns/${campaignID}/notes/${noteID}`);
 			useFeature('delete_note', 'notes');
-			this.loadNotes();
+			loadNotes();
 		} catch (err) {
 			displayError('Could not delete note');
 		}
@@ -197,10 +161,10 @@ export default class NotesList extends React.Component {
 
 	deleteFolder = async folderID => {
 		try {
-			const { campaignID } = this.props;
+			const { campaignID, loadNotes } = this.props;
 			await httpDelete(`/api/campaigns/${campaignID}/notes/folders/${folderID}`);
 			useFeature('delete_folder', 'notes');
-			this.loadNotes();
+			loadNotes();
 		} catch (err) {
 			displayError('Could not delete folder');
 		}
@@ -208,24 +172,22 @@ export default class NotesList extends React.Component {
 
 	renameFolder = async title => {
 		try {
-			const { campaignID } = this.props;
+			const { campaignID, loadNotes } = this.props;
 			const { renameFolderID } = this.state;
 			await post(`/api/campaigns/${campaignID}/notes/folders/rename/${renameFolderID}`, { title });
 			this.setState({
 				renameFolderID: 0,
 				renameFolderModalOpen: false,
-			}, this.loadNotes);
+			}, loadNotes);
 		} catch (err) {
 			displayError('Could not rename folder');
 		}
 	}
 
 	render() {
-		const { currentFolder } = this.props;
+		const { currentFolder, loading, results } = this.props;
 
 		const {
-			results,
-			loading,
 			creatingNote,
 			creatingFolder,
 			nameFolderModalOpen,
