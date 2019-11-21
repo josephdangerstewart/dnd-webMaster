@@ -11,6 +11,7 @@
     "@blueprintjs/core": "^3.12.0",
     "@blueprintjs/labs": "^0.16.3",
     "@blueprintjs/select": "^3.6.1",
+    "@sentry/node": "5.9.0",
     "babel": "^6.23.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.7.1",
