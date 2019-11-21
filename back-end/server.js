@@ -18,7 +18,8 @@ try {
 }
 
 // Initialize alerting
-Sentry.init({ dsn: sentryApiTokens.key });
+const environment = process.env.SERVER_TYPE === 'prod' ? 'prod' : 'dev';
+Sentry.init({ dsn: sentryApiTokens.key, environment });
 
 // Declare our server object
 const app = express();
