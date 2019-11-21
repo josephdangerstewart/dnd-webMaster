@@ -10,3 +10,4 @@ coverage/
 database-credentials.json
 deploy.sh
 cloudinary-api.json
+sentry-api.json

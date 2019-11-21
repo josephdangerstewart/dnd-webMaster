@@ -9,6 +9,18 @@ import registerRoutesNoAuth from './route-registry-no-auth';
 import noAuthStaticAssets from './no-auth-static-assets';
 import bodyParser from 'body-parser';
 
+const Sentry = require('@sentry/node');
+let sentryApiTokens;
+try {
+	sentryApiTokens = require('./sentry-api.json');
+} catch {
+	sentryApiTokens = { key: '' };
+}
+
+// Initialize alerting
+const environment = process.env.SERVER_TYPE === 'prod' ? 'prod' : 'dev';
+Sentry.init({ dsn: sentryApiTokens.key, environment });
+
 // Declare our server object
 const app = express();
 
