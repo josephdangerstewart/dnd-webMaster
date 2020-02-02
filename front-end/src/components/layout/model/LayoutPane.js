@@ -45,12 +45,12 @@ export default class LayoutPane {
 		const obj = {
 			type: this.type,
 			id: this.paneId,
-			portal: this.portal,
 		};
 
 		if (!ignoreState) {
 			obj.state = this.state;
 			obj.tabName = this.tabName;
+			obj.portal = this.portal;
 		} else if (typeof this.getPreservedState === 'function') {
 			obj.state = this.getPreservedState(this.state);
 			if (obj.state.__tabName) {

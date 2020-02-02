@@ -1,22 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SuperCanvas } from 'react-super-canvas/dist';
-import { GridBackground, PolygonBrush } from 'react-super-canvas/dist/defaults';
+import { ListPage } from './list-page';
 
-export const MapMaker = ({ width }) => (
+export const MapMaker = ({ campaignID, closePane }) => (
 	<div>
-		<h2>Map Maker</h2>
-		<SuperCanvas
-			width={width}
-			height={500}
-			availableBrushes={[
-				new PolygonBrush(),
-			]}
-			activeBackgroundElement={new GridBackground(10)}
+		<ListPage
+			campaignID={campaignID}
+			closePane={closePane}
 		/>
 	</div>
 );
 
 MapMaker.propTypes = {
-	width: PropTypes.number,
+	closePane: PropTypes.func.isRequired,
+	campaignID: PropTypes.campaignID,
 };

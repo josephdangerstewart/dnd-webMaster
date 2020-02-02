@@ -181,6 +181,7 @@ export default class Grid extends React.Component {
 					this.setLayout(this.state.layout);
 				}}
 				insertPaneIntoPanel={noop}
+				closePane={noop}
 				panelHasFocus={false}
 			/>
 		);
@@ -210,6 +211,11 @@ export default class Grid extends React.Component {
 							this.insertPaneIntoPanel({ type, state, tabName }, panel);
 						}
 					}
+					closePane={() => {
+						if (pane.remove()) {
+							this.setLayout(this.state.layout);
+						}
+					}}
 					panelHasFocus={panelHasFocus}
 				/>
 			</div>

@@ -1,5 +1,5 @@
 -- Executed on test 2/1/2020
-CREATE TABLE IF NOT EXISTS `Map` (
+CREATE TABLE IF NOT EXISTS `map` (
   `mapID` INT NOT NULL,
   `mapName` TEXT NULL,
   `mapData` LONGTEXT NULL,
