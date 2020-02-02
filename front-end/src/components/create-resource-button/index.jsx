@@ -1,10 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Popover, InputGroup, Spinner } from '@blueprintjs/core';
+import classNames from '../../utility/classNames';
 
 import styles from './styles.less';
 
-export const CreateResourceButton = ({ onCreate, resourceLabel, isLoading }) => {
+export const CreateResourceButton = ({
+	onCreate,
+	resourceLabel,
+	isLoading,
+	buttonClassName,
+}) => {
 	const [ resourceName, setResourceName ] = useState('');
 
 	const handleInputChange = useCallback((event) => {
@@ -20,7 +26,7 @@ export const CreateResourceButton = ({ onCreate, resourceLabel, isLoading }) => 
 			<Button
 				minimal
 				icon="plus"
-				className={styles.button}
+				className={classNames(buttonClassName, styles.button)}
 			/>
 			<div className={styles.popoverContent}>
 				<p className={styles.popoverTitle}>{resourceLabel}</p>
@@ -48,4 +54,5 @@ CreateResourceButton.propTypes = {
 	onCreate: PropTypes.func,
 	resourceLabel: PropTypes.string,
 	isLoading: PropTypes.bool,
+	buttonClassName: PropTypes.string,
 };

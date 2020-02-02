@@ -11,7 +11,9 @@ import List from '../../../list';
 import Title from '../../../title';
 import { CreateResourceButton } from '../../../create-resource-button';
 
-export const ListPage = ({ campaignID, closePane }) => {
+import styles from './styles.less';
+
+export const ListPage = ({ campaignID, closePane, onMapSelected }) => {
 	const {
 		data,
 		isLoading,
@@ -25,6 +27,10 @@ export const ListPage = ({ campaignID, closePane }) => {
 	const renderItem = useCallback((item) => (
 		<span>{item.mapName}</span>
 	), []);
+
+	const handleItemSelected = useCallback((map) => {
+		onMapSelected(map.mapID);
+	}, [ onMapSelected ]);
 
 	const createMap = useCallback(async (mapName) => {
 		setIsCreatingMap(true);
@@ -53,12 +59,13 @@ export const ListPage = ({ campaignID, closePane }) => {
 	return (
 		<div>
 			<Title
-				fontSize={28}
+				fontSize={25}
 				rightComponent={
 					<CreateResourceButton
 						onCreate={createMap}
 						resourceLabel="Map name"
 						isLoading={isCreatingMap}
+						buttonClassName={styles.button}
 					/>
 				}
 			>
@@ -70,6 +77,7 @@ export const ListPage = ({ campaignID, closePane }) => {
 				<List
 					items={data.maps}
 					renderItem={renderItem}
+					onItemSelected={handleItemSelected}
 				/>
 			}
 		</div>
@@ -78,5 +86,6 @@ export const ListPage = ({ campaignID, closePane }) => {
 
 ListPage.propTypes = {
 	closePane: PropTypes.func.isRequired,
+	onMapSelected: PropTypes.func.isRequired,
 	campaignID: PropTypes.string,
 };
