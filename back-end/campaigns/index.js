@@ -8,6 +8,7 @@ import * as campaignRoutes from './CampaignsController';
 import * as characterRoutes from './characters/CharacterController';
 import * as notesRoutes from './notes/NotesController';
 import * as linkedPlaylistRoutes from './music/LinkedPlaylistController';
+import * as mapRoutes from './maps/MapController';
 
 const uploader = multer({ storage: multer.memoryStorage() });
 
@@ -33,6 +34,30 @@ export default app => {
 	app.route('/api/campaigns/:campaignID/playlists/hotkey')
 		.post(
 			asRouteFunction(linkedPlaylistRoutes.changePlaylistHotkey, true)
+		);
+
+	app.route('/api/campaigns/:campaignID/maps/:mapID')
+		.post(
+			campaignRoutes.userCanAccessCampaign,
+			asRouteFunction(mapRoutes.updateMap, true)
+		);
+
+	app.route('/api/campaigns/:campaignID/maps/:mapID')
+		.get(
+			campaignRoutes.userCanAccessCampaign,
+			asRouteFunction(mapRoutes.getMap, true)
+		);
+
+	app.route('/api/campaigns/:campaignID/maps')
+		.post(
+			campaignRoutes.userCanAccessCampaign,
+			asRouteFunction(mapRoutes.createMap, true)
+		);
+	
+	app.route('/api/campaigns/:campaignID/maps')
+		.get(
+			campaignRoutes.userCanAccessCampaign,
+			asRouteFunction(mapRoutes.listMaps, true)
 		);
 
 	app.route('/api/campaigns/:campaignID/characters/:characterID')
