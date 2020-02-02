@@ -13,6 +13,7 @@ import {
 	Menu,
 	MenuItem,
 } from '@blueprintjs/core';
+import * as portals from 'react-reverse-portal';
 
 import PanelGroup from './PanelGroup';
 import ContentPanel from './ContentPanel';
@@ -27,6 +28,7 @@ import {
 	movePane,
 	insertPaneIntoPanel,
 	insertIntoFirstPanel,
+	getAllPanes,
 } from './model/layout-manager';
 import { get } from 'Utility/fetch';
 import { screenView, openTool } from 'Utility/gtag';
@@ -38,6 +40,8 @@ import { displayError } from '../toast';
 const defaultLayout = {
 	rows: [],
 };
+
+const noop = () => {};
 
 export default class Grid extends React.Component {
 	static propTypes = {
@@ -144,7 +148,7 @@ export default class Grid extends React.Component {
 		);
 	}
 
-	mapContent = (currentTab, width, height, panel, panelHasFocus) => (pane, index) => {
+	renderComponentForPane = (pane) => {
 		const tool = tools.find(tool => tool.name === pane.getType());
 		let Content;
 
@@ -156,7 +160,7 @@ export default class Grid extends React.Component {
 					title="Tool Not Found"
 					description={
 						<span>
-							We could not find a tool with the type <strong>{pane.getType()}</strong>.
+							We could not find a tool with the type <strong>{pane.getType()}</strong>
 						</span>
 					}
 					icon="error"
@@ -167,9 +171,30 @@ export default class Grid extends React.Component {
 		const { currentCampaignID } = this.state;
 
 		return (
+			<Content
+				pane={pane}
+				width={0}
+				height={0}
+				campaignID={currentCampaignID}
+				setTabName={name => {
+					pane.tabName = name;
+					this.setLayout(this.state.layout);
+				}}
+				insertPaneIntoPanel={noop}
+				panelHasFocus={false}
+			/>
+		);
+	}
+
+	mapContent = (currentTab, width, height, panel, panelHasFocus) => (pane, index) => {
+		const portal = pane.getPortal();
+
+		const { currentCampaignID } = this.state;
+
+		return (
 			<div style={{ display: currentTab !== index ? 'none' : undefined }}>
-				<Content
-					key={`pane-${pane.getId()}`}
+				<portals.OutPortal
+					node={portal}
 					pane={pane}
 					width={width}
 					height={height}
@@ -253,62 +278,72 @@ export default class Grid extends React.Component {
 
 	render() {
 		const { layout, validating, currentCampaignID } = this.state;
+		const panes = getAllPanes(layout);
 
 		return (
-			<div className={styles.root}>
-				<div className={styles.rootFlex}>
-					<Toolbar
-						loadLayout={this.loadLayout}
-						addTool={(toolName) => {
-							// Analytics code
-							openTool(toolName, 'toolbar');
-							this.addPane(toolName);
-						}}
-						goHome={this.goHome}
-						tools={tools}
-						campaignID={currentCampaignID}
-						currentLayout={layout}
-					/>
-					{validating ?
-						<div className={styles.spinnerContainer}>
-							<Spinner />
-						</div>
-						: layout.rows.length > 0 ?
-							<div className={styles.grid}>
-								{this.renderLayout(layout)}
-							</div>
-							:
-							<div className={styles.grid}>
-								<NonIdealState
-									title="No tools"
-									description="It looks like you don't have any tools open!"
-									icon="info-sign"
-									action={
-										<Popover
-											position={Position.BOTTOM_LEFT}
-											modifiers={{ arrow: false }}
-										>
-											<Button
-												intent={Intent.PRIMARY}
-												rightIcon="caret-down"
-											>
-												Open one!
-											</Button>
-											<Menu>
-												{tools.map(this.mapToolMenuItem)}
-											</Menu>
-										</Popover>
-									}
-								/>
-							</div>
-					}
+			<>
+				<div style={{ display: 'none' }}>
+					{panes.map((pane) => (
+						<portals.InPortal node={pane.getPortal()} key={`pane-${pane.getId()}`}>
+							{this.renderComponentForPane(pane)}
+						</portals.InPortal>
+					))}
 				</div>
-				<GlobalSearchBar
-					campaignID={currentCampaignID}
-					addTool={this.insertIntoFirstPanel}
-				/>
-				<CustomDragLayer />
-			</div>
+				<div className={styles.root}>
+					<div className={styles.rootFlex}>
+						<Toolbar
+							loadLayout={this.loadLayout}
+							addTool={(toolName) => {
+								// Analytics code
+								openTool(toolName, 'toolbar');
+								this.addPane(toolName);
+							}}
+							goHome={this.goHome}
+							tools={tools}
+							campaignID={currentCampaignID}
+							currentLayout={layout}
+						/>
+						{validating ?
+							<div className={styles.spinnerContainer}>
+								<Spinner />
+							</div>
+							: layout.rows.length > 0 ?
+								<div className={styles.grid}>
+									{this.renderLayout(layout)}
+								</div>
+								:
+								<div className={styles.grid}>
+									<NonIdealState
+										title="No tools"
+										description="It looks like you don't have any tools open!"
+										icon="info-sign"
+										action={
+											<Popover
+												position={Position.BOTTOM_LEFT}
+												modifiers={{ arrow: false }}
+											>
+												<Button
+													intent={Intent.PRIMARY}
+													rightIcon="caret-down"
+												>
+													Open one!
+												</Button>
+												<Menu>
+													{tools.map(this.mapToolMenuItem)}
+												</Menu>
+											</Popover>
+										}
+									/>
+								</div>
+						}
+					</div>
+					<GlobalSearchBar
+						campaignID={currentCampaignID}
+						addTool={this.insertIntoFirstPanel}
+					/>
+					<CustomDragLayer />
+				</div>
+			</>
 		);
 	}
 }

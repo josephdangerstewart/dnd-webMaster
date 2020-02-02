@@ -79,6 +79,25 @@ export const movePane = (direction, variant, pane, targetPanel) => {
 	return false;
 };
 
+export const getAllPanes = (layout) => {
+	const rows = layout.getRows();
+	const panes = [];
+
+	rows.forEach(row => {
+		const panels = row.getPanels();
+
+		panels.forEach((panel) => {
+			if (panel instanceof Layout) {
+				panes.push(...getAllPanes(panel));
+			} else {
+				panes.push(...panel.getPanes());
+			}
+		});
+	});
+
+	return panes;
+};
+
 const movePaneNextToSoft = (direction, pane, targetPanel) => {
 	const paneJson = pane.toJson({});
 	if (pane.remove()) {
