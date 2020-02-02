@@ -73,4 +73,8 @@ module.exports = {
 		extensions: [ '.js', '.jsx', '.less', '.css' ],
 		alias: { Utility: path.resolve(__dirname, 'front-end/src/utility/') },
 	},
+	externals: {
+		'react': 'React',
+		'react-dom': 'ReactDOM',
+	},
 };

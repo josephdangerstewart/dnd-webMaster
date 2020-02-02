@@ -4,6 +4,7 @@ import SearchTool from './search';
 import Notes from './notes';
 import Music from './music';
 import DiceRoller from './dice-roller';
+import { MapMaker } from './map-maker';
 
 /**
  * Add an object to the array below in the following format:
@@ -51,5 +52,11 @@ export default [
 		displayName: 'Dice Roll Tool',
 		defaultLabel: 'Dice Roller',
 		component: DiceRoller,
+	},
+	{
+		name: 'mapMaker',
+		displayName: 'Map Maker',
+		defaultLabel: 'Map Maker',
+		component: MapMaker,
 	},
 ];
