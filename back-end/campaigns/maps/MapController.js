@@ -33,12 +33,20 @@ export const updateMap = async (path, query, user, connection, body) => {
 		mapData,
 	} = body;
 
+	const updateClauses = [
+		(mapName || mapName === '') && 'mapName = :mapName',
+		mapData && 'mapData = :mapData',
+	].filter(Boolean);
+
+	if (!updateClauses.length) {
+		return { changed: false };
+	}
+
 	const results = await promiseQuery(
 		connection,
 		`UPDATE map
 		SET
-			mapName = :mapName,
-			mapData = :mapData
+			${updateClauses.join(',')}
 		WHERE
 			mapID = :mapID AND
 			campaignID = :campaignID`,

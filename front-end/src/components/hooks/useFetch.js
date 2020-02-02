@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { get, post, httpDelete, postForm } from '../../utility/fetch';
+import debounce from '../../utility/debounce';
 
 const noop = () => false;
 
@@ -33,20 +34,40 @@ export function useAsyncCallback(callback, deps = []) {
 	return asyncCallback;
 }
 
+export function useDebouncedAsyncCallback(callback, timeout, deps = []) {
+	return useAsyncCallback(debounce(callback, timeout), [ ...deps, timeout ]);
+}
+
 export function useGet() {
 	return useAsyncCallback(get);
+}
+
+export function useDebouncedGet(timeout) {
+	return useDebouncedAsyncCallback(get, timeout);
 }
 
 export function usePost() {
 	return useAsyncCallback(post);
 }
 
+export function useDebouncedPost(timeout) {
+	return useDebouncedAsyncCallback(post, timeout);
+}
+
 export function useHttpDelete() {
 	return useAsyncCallback(httpDelete);
 }
 
+export function useDebouncedHttpDelete(timeout) {
+	return useDebouncedAsyncCallback(httpDelete, timeout);
+}
+
 export function usePostForm() {
 	return useAsyncCallback(postForm);
+}
+
+export function useDeboucnedPostForm(timeout) {
+	return useDebouncedAsyncCallback(postForm, timeout);
 }
 
 export function makeCancellable(promise) {
@@ -65,7 +86,7 @@ export function makeCancellable(promise) {
 	return wrappedPromise;
 }
 
-export function useGetOnMount(path) {
+export function useGetOnMount(path, onInitialLoad) {
 	const [ data, setData ] = useState(null);
 	const [ isLoading, setIsLoading ] = useState(true);
 	const [ error, setError ] = useState(null);
@@ -73,10 +94,11 @@ export function useGetOnMount(path) {
 
 	const loadData = useCallback(() => {
 		setIsLoading(true);
-		getJson(path)
+		return getJson(path)
 			.then(data => {
 				setData(data);
 				setIsLoading(false);
+				return data;
 			})
 			.catch((error) => {
 				setError(error);
@@ -85,7 +107,11 @@ export function useGetOnMount(path) {
 	}, []);
 
 	useEffect(() => {
-		loadData();
+		const promise = loadData();
+
+		if (onInitialLoad) {
+			promise.then(onInitialLoad);
+		}
 	}, []);
 
 	return {

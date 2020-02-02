@@ -11,6 +11,8 @@ import cloudinary from 'cloudinary';
 import DataURI from 'datauri';
 import path from 'path';
 
+const Sentry = require('@sentry/node');
+
 let databaseCredentials;
 try {
 	databaseCredentials = require('./database-credentials.json');
@@ -176,6 +178,9 @@ export const asRouteFunction = (callback, withDBConnection) => async (request, r
 	} catch (err) {
 		// eslint-disable-next-line
 		console.log(err);
+	
+		Sentry.captureException(err);
+
 		if (connection && connection.release) {
 			connection.release();
 		}

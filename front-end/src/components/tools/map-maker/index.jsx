@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { ListPage } from './list-page';
+import { SingleView } from './single-view';
 
 import styles from './styles.less';
 
@@ -9,7 +10,7 @@ const views = Object.freeze({
 	single: 'single',
 });
 
-export const MapMaker = ({ campaignID, closePane }) => {
+export const MapMaker = ({ campaignID, closePane, width }) => {
 	const [ currentView, setCurrentView ] = useState(views.list);
 	const [ currentMapID, setCurrentMapID ] = useState(-1);
 
@@ -34,7 +35,12 @@ export const MapMaker = ({ campaignID, closePane }) => {
 
 	return (
 		<div className={styles.root}>
-			<button onClick={goToList}>LEAVE MAP {currentMapID}</button>
+			<SingleView
+				onBack={goToList}
+				mapID={currentMapID}
+				campaignID={campaignID}
+				width={width - 20}
+			/>
 		</div>
 	);
 };
@@ -42,4 +48,5 @@ export const MapMaker = ({ campaignID, closePane }) => {
 MapMaker.propTypes = {
 	closePane: PropTypes.func.isRequired,
 	campaignID: PropTypes.campaignID,
+	width: PropTypes.number,
 };

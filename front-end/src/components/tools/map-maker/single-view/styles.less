@@ -1,0 +1,26 @@
+@import '../../../../styles/colors.less';
+@import '../../../../styles/mixins.less';
+
+.root {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	height: 100%;
+}
+
+.map-container {
+	flex-grow: 1;
+}
+
+.title {
+	display: flex;
+}
+
+.spinner {
+	margin-left: 15px;
+}
+
+.button {
+	margin-right: 10px;
+	.with-button-styles(@primary-color);
+}
