@@ -1,3 +1,5 @@
+import * as portals from 'react-reverse-portal';
+
 export default class LayoutPane {
 	type = '';
 	paneId = -1;
@@ -5,6 +7,7 @@ export default class LayoutPane {
 	state = {};
 	tabName = null;
 	getPreservedState = null;
+	portal = null;
 
 	constructor(jsonModel, parent) {
 		if (!jsonModel.id && typeof jsonModel.id !== 'number') {
@@ -21,6 +24,9 @@ export default class LayoutPane {
 		}
 		if (jsonModel.tabName) {
 			this.tabName = jsonModel.tabName;
+		}
+		if (jsonModel.portal) {
+			this.portal = jsonModel.portal;
 		}
 	}
 
@@ -39,6 +45,7 @@ export default class LayoutPane {
 		const obj = {
 			type: this.type,
 			id: this.paneId,
+			portal: this.portal,
 		};
 
 		if (!ignoreState) {
@@ -54,6 +61,14 @@ export default class LayoutPane {
 
 		return obj;
 	};
+
+	getPortal = () => {
+		if (!this.portal) {
+			this.portal = portals.createPortalNode();
+		}
+
+		return this.portal;
+	}
 
 	remove = () => {
 		if (this.parent) {
