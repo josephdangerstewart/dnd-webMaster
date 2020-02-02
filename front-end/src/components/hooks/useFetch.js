@@ -71,7 +71,8 @@ export function useGetOnMount(path) {
 	const [ error, setError ] = useState(null);
 	const getJson = useGet();
 
-	useEffect(() => {
+	const loadData = useCallback(() => {
+		setIsLoading(true);
 		getJson(path)
 			.then(data => {
 				setData(data);
@@ -83,9 +84,14 @@ export function useGetOnMount(path) {
 			});
 	}, []);
 
+	useEffect(() => {
+		loadData();
+	}, []);
+
 	return {
 		data,
 		isLoading,
 		error,
+		reload: loadData,
 	};
 }

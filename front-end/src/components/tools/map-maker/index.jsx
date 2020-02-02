@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ListPage } from './list-page';
 
+import styles from './styles.less';
+
 export const MapMaker = ({ campaignID, closePane }) => (
-	<div>
+	<div className={styles.root}>
 		<ListPage
 			campaignID={campaignID}
 			closePane={closePane}

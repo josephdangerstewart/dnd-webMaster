@@ -1,6 +1,6 @@
 -- Executed on test 2/1/2020
 CREATE TABLE IF NOT EXISTS `map` (
-  `mapID` INT NOT NULL,
+  `mapID` INT NOT NULL AUTO_INCREMENT,
   `mapName` TEXT NULL,
   `mapData` LONGTEXT NULL,
   `campaignID` INT(10) UNSIGNED NOT NULL,
