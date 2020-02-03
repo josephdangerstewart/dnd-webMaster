@@ -50,7 +50,7 @@ export const updateMap = async (path, query, user, connection, body) => {
 		WHERE
 			mapID = :mapID AND
 			campaignID = :campaignID`,
-		{ mapID, mapName, mapData, campaignID }
+		{ mapID, mapName, mapData: JSON.stringify(mapData), campaignID }
 	);
 
 	return {
@@ -81,12 +81,17 @@ export const getMap = async (path, query, user, connection) => {
 
 	const maps = await promiseQuery(
 		connection,
-		'SELECT mapName, mapID FROM map WHERE mapID = :mapID AND campaignID = :campaignID',
+		'SELECT mapName, mapID, mapData FROM map WHERE mapID = :mapID AND campaignID = :campaignID',
 		{ mapID, campaignID },
 	);
 
 	if (maps[0]) {
-		return { map: maps[0] };
+		const map = {
+			...maps[0],
+			mapData: JSON.parse(maps[0].mapData),
+		};
+
+		return { map };
 	}
 	return null;
 };

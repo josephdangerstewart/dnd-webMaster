@@ -20,31 +20,35 @@ import styles from './styles.less';
 
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
-	const [ mapData, setMapData ] = useState(null);
 	const [ isUpdating, setIsUpdating ] = useState(false);
 	const { ref: mapContainerRef, width, height } = useResizeObserver();
 	const post = usePost();
 
-	const postDeboucned = useDebouncedAsyncCallback(async (path, body) => {
+	const postDebounced = useDebouncedAsyncCallback(async (path, body) => {
 		await post(path, body);
 		setIsUpdating(false);
 	}, 1000, [ post ]);
 
 	const onInitialLoad = useCallback((data) => {
 		setMapName(data.map.mapName);
-		setMapData(data.map.mapData);
 	}, []);
 
 	const {
 		isLoading,
+		data,
 		error,
 	} = useGetOnMount(`/api/campaigns/${campaignID}/maps/${mapID}`, onInitialLoad);
 
-	const onMapChange = useCallback(async (mapName) => {
+	const onMapNameChange = useCallback(async (mapName) => {
 		setMapName(mapName);
 		setIsUpdating(true);
-		await postDeboucned(`/api/campaigns/${campaignID}/maps/${mapID}`, { mapName });
+		await postDebounced(`/api/campaigns/${campaignID}/maps/${mapID}`, { mapName });
 	}, []);
+
+	const onMapDataChange = useCallback(async (mapData) => {
+		setIsUpdating(true);
+		await postDebounced(`/api/campaigns/${campaignID}/maps/${mapID}`, { mapData });
+	});
 
 	const availableBrushes = useMemo(() => [
 		new PolygonBrush(),
@@ -91,7 +95,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 			>
 				<EditableText
 					value={mapName}
-					onChange={onMapChange}
+					onChange={onMapNameChange}
 					placeholder="Title..."
 				/>
 			</Title>
@@ -101,6 +105,8 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 					activeBackgroundElement={backgroundElement}
 					height={height}
 					availableBrushes={availableBrushes}
+					onChange={onMapDataChange}
+					initialValue={data.map.mapData}
 				/>
 			</div>
 		</div>
