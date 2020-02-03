@@ -7,6 +7,7 @@ import {
 	Spinner,
 	NonIdealState,
 	Button,
+	Intent,
 } from '@blueprintjs/core';
 import {
 	useGetOnMount,
@@ -70,6 +71,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 					<Button
 						text="Go back"
 						onClick={onBack}
+						intent={Intent.PRIMARY}
 					/>
 				}
 			/>

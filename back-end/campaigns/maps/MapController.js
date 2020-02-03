@@ -85,10 +85,17 @@ export const getMap = async (path, query, user, connection) => {
 		{ mapID, campaignID },
 	);
 
+	let mapData;
+	try {
+		mapData = JSON.parse(maps[0].mapData);
+	} catch (err) {
+		mapData = null;
+	}
+
 	if (maps[0]) {
 		const map = {
 			...maps[0],
-			mapData: JSON.parse(maps[0].mapData),
+			mapData,
 		};
 
 		return { map };
