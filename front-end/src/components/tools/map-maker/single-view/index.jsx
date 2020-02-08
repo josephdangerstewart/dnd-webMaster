@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { SuperCanvas } from 'react-super-canvas/dist';
-import { GridBackground, PolygonBrush } from 'react-super-canvas/dist/defaults';
+import { SuperCanvas } from 'react-super-canvas';
+import { GridBackground, PolygonBrush } from 'react-super-canvas/defaults';
 import PropTypes from 'prop-types';
 import {
 	EditableText,
