@@ -20,6 +20,8 @@ import ContentPanel from './ContentPanel';
 import CustomDragLayer from './CustomDragLayer';
 import Toolbar from './toolbar';
 import GlobalSearchBar from './global-search';
+import { PaneContextProvider } from '../pane-context-provider';
+import { HotkeyProvider } from '../hotkey-provider';
 
 import styles from './styles.less';
 
@@ -56,6 +58,7 @@ export default class Grid extends React.Component {
 		savedLayouts: [],
 		validating: true,
 		focusedPanelId: -1,
+		focusedPaneId: -1,
 	}
 
 	async componentDidMount() {
@@ -143,7 +146,7 @@ export default class Grid extends React.Component {
 					(type, state, tabName) => this.insertPaneIntoPanel({ type, state, tabName }, panel)
 				}
 				focusedPanelId={focusedPanelId}
-				setFocusedPanelId={focusedPanelId => this.setState({ focusedPanelId })}
+				setFocusedPanelId={(focusedPanelId, focusedPaneId) => this.setState({ focusedPanelId, focusedPaneId })}
 			/>
 		);
 	}
@@ -283,73 +286,81 @@ export default class Grid extends React.Component {
 	)
 
 	render() {
-		const { layout, validating, currentCampaignID } = this.state;
+		const { layout, validating, currentCampaignID, focusedPaneId } = this.state;
 		const panes = getAllPanes(layout);
 
 		return (
-			<>
-				<div style={{ display: 'none' }}>
-					{panes.map((pane) => (
-						<portals.InPortal node={pane.getPortal()} key={`pane-${pane.getId()}`}>
-							{this.renderComponentForPane(pane)}
-						</portals.InPortal>
-					))}
-				</div>
-				<div className={styles.root}>
-					<div className={styles.rootFlex}>
-						<Toolbar
-							loadLayout={this.loadLayout}
-							addTool={(toolName) => {
-								// Analytics code
-								openTool(toolName, 'toolbar');
-								this.addPane(toolName);
-							}}
-							goHome={this.goHome}
-							tools={tools}
-							campaignID={currentCampaignID}
-							currentLayout={layout}
-						/>
-						{validating ?
-							<div className={styles.spinnerContainer}>
-								<Spinner />
-							</div>
-							: layout.rows.length > 0 ?
-								<div className={styles.grid}>
-									{this.renderLayout(layout)}
-								</div>
-								:
-								<div className={styles.grid}>
-									<NonIdealState
-										title="No tools"
-										description="It looks like you don't have any tools open!"
-										icon="info-sign"
-										action={
-											<Popover
-												position={Position.BOTTOM_LEFT}
-												modifiers={{ arrow: false }}
-											>
-												<Button
-													intent={Intent.PRIMARY}
-													rightIcon="caret-down"
-												>
-													Open one!
-												</Button>
-												<Menu>
-													{tools.map(this.mapToolMenuItem)}
-												</Menu>
-											</Popover>
-										}
-									/>
-								</div>
-						}
+			<HotkeyProvider
+				focusedPaneId={focusedPaneId}
+			>
+				<>
+					<div style={{ display: 'none' }}>
+						{panes.map((pane) => (
+							<portals.InPortal node={pane.getPortal()} key={`pane-${pane.getId()}`}>
+								<PaneContextProvider
+									paneId={pane.getId()}
+								>
+									{this.renderComponentForPane(pane)}
+								</PaneContextProvider>
+							</portals.InPortal>
+						))}
 					</div>
-					<GlobalSearchBar
-						campaignID={currentCampaignID}
-						addTool={this.insertIntoFirstPanel}
-					/>
-					<CustomDragLayer />
-				</div>
-			</>
+					<div className={styles.root}>
+						<div className={styles.rootFlex}>
+							<Toolbar
+								loadLayout={this.loadLayout}
+								addTool={(toolName) => {
+									// Analytics code
+									openTool(toolName, 'toolbar');
+									this.addPane(toolName);
+								}}
+								goHome={this.goHome}
+								tools={tools}
+								campaignID={currentCampaignID}
+								currentLayout={layout}
+							/>
+							{validating ?
+								<div className={styles.spinnerContainer}>
+									<Spinner />
+								</div>
+								: layout.rows.length > 0 ?
+									<div className={styles.grid}>
+										{this.renderLayout(layout)}
+									</div>
+									:
+									<div className={styles.grid}>
+										<NonIdealState
+											title="No tools"
+											description="It looks like you don't have any tools open!"
+											icon="info-sign"
+											action={
+												<Popover
+													position={Position.BOTTOM_LEFT}
+													modifiers={{ arrow: false }}
+												>
+													<Button
+														intent={Intent.PRIMARY}
+														rightIcon="caret-down"
+													>
+														Open one!
+													</Button>
+													<Menu>
+														{tools.map(this.mapToolMenuItem)}
+													</Menu>
+												</Popover>
+											}
+										/>
+									</div>
+							}
+						</div>
+						<GlobalSearchBar
+							campaignID={currentCampaignID}
+							addTool={this.insertIntoFirstPanel}
+						/>
+						<CustomDragLayer />
+					</div>
+				</>
+			</HotkeyProvider>
 		);
 	}
 }

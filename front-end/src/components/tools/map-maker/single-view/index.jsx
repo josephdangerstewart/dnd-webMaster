@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { SuperCanvas } from 'react-super-canvas';
 import { GridBackground, PolygonBrush } from 'react-super-canvas/defaults';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import {
 	useDebouncedAsyncCallback,
 	usePost,
 } from '../../../hooks/useFetch';
+import { useHotkey } from '../../../hooks/useHotkey';
 import { useResizeObserver } from '../../../hooks/useResizeObserver';
 import Title from '../../../title';
 
@@ -24,6 +25,23 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ isUpdating, setIsUpdating ] = useState(false);
 	const { ref: mapContainerRef, width, height } = useResizeObserver();
 	const post = usePost();
+	const superCanvasRef = useRef(null);
+
+	const undoLastAction = useCallback(() => {
+		if (superCanvasRef.current) {
+			superCanvasRef.current.undo();
+		}
+	}, []);
+
+	const redoLastAction = useCallback(() => {
+		if (superCanvasRef.current) {
+			superCanvasRef.current.redo();
+		}
+	}, []);
+
+	useHotkey('ctrl + z', undoLastAction);
+	useHotkey('ctrl + y', redoLastAction);
+	useHotkey('ctrl + shift + z', redoLastAction);
 
 	const postDebounced = useDebouncedAsyncCallback(async (path, body) => {
 		await post(path, body);
@@ -109,6 +127,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 					availableBrushes={availableBrushes}
 					onChange={onMapDataChange}
 					initialValue={data.map.mapData}
+					ref={superCanvasRef}
 				/>
 			</div>
 		</div>

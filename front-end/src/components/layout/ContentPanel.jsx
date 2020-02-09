@@ -158,10 +158,11 @@ export default class ContentPanel extends React.Component {
 	}
 
 	handleFocus = () => {
-		const { panelId, focusedPanelId, setFocusedPanelId } = this.props;
+		const { panelId, focusedPanelId, setFocusedPanelId, panes } = this.props;
+		const { currentTab } = this.state;
 
 		if (panelId !== focusedPanelId) {
-			setFocusedPanelId(panelId);
+			setFocusedPanelId(panelId, panes[currentTab] && panes[currentTab].getId());
 		}
 	}
 
