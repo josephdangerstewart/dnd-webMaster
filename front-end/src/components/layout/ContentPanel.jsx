@@ -52,6 +52,11 @@ export default class ContentPanel extends React.Component {
 	componentDidMount() {
 		const { defaultSelected } = this.props;
 		this.setState({ currentTab: defaultSelected });
+		document.addEventListener('click', this.handleClick);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('click', this.handleClick);
 	}
 
 	handleRemovePane = (index, pane) => event => {
@@ -166,13 +171,30 @@ export default class ContentPanel extends React.Component {
 		}
 	}
 
+	handleClick = event => {
+		const { panelId } = this.props;
+
+		let node = event.target;
+		while (node) {
+			if (node.id === `panel-container-${panelId}`) {
+				this.handleFocus();
+				break;
+			}
+			node = node.parentNode;
+		}
+	}
+
 	render() {
 		const { panes, dropPaneIntoPanel, movePane, renderContent, panelId } = this.props;
 		const { currentTab, width, height } = this.state;
 
 		return (
 			<ResizeSensor onResize={this.componentResized}>
-				<div className={styles.pane} onClick={this.handleFocus}>
+				<div
+					className={styles.pane}
+					id={`panel-container-${panelId}`}
+					ref={ref => this.contentContainer = ref}
+				>
 					<div className={styles.paneHeader}>
 						<TabContainer
 							onDrop={item => {
