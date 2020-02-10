@@ -27,13 +27,15 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const post = usePost();
 	const superCanvasRef = useRef(null);
 
-	const undoLastAction = useCallback(() => {
+	const undoLastAction = useCallback((e) => {
+		e.preventDefault();
 		if (superCanvasRef.current) {
 			superCanvasRef.current.undo();
 		}
 	}, []);
 
-	const redoLastAction = useCallback(() => {
+	const redoLastAction = useCallback((e) => {
+		e.preventDefault();
 		if (superCanvasRef.current) {
 			superCanvasRef.current.redo();
 		}
