@@ -75,7 +75,7 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [ '.js', '.jsx', '.less', '.css' ],
+		extensions: [ '.js', '.jsx', '.less', '.css', '.ts', '.tsx' ],
 		alias: { Utility: path.resolve(__dirname, 'front-end/src/utility/') },
 	},
 	externals: {

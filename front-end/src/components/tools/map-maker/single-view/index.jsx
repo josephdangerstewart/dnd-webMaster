@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { SuperCanvas } from 'react-super-canvas';
-import { GridBackground, PolygonBrush, ImageBrush } from 'react-super-canvas/defaults';
+import { GridBackground, PolygonBrush } from 'react-super-canvas/defaults';
 import PropTypes from 'prop-types';
 import {
 	EditableText,
@@ -17,6 +17,7 @@ import {
 import { useHotkey } from '../../../hooks/useHotkey';
 import { useResizeObserver } from '../../../hooks/useResizeObserver';
 import Title from '../../../title';
+import { LocationPinBrush } from './LocationPinBrush';
 
 import styles from './styles.less';
 
@@ -73,7 +74,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 
 	const availableBrushes = useMemo(() => [
 		new PolygonBrush(),
-		new ImageBrush('/svg/location-pin.svg'),
+		new LocationPinBrush(),
 	], []);
 
 	const backgroundElement = useMemo(() => new GridBackground(10));
