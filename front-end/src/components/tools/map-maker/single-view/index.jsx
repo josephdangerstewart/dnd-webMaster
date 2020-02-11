@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { SuperCanvas } from 'react-super-canvas';
-import { GridBackground, PolygonBrush } from 'react-super-canvas/defaults';
+import { GridBackground, PolygonBrush, ImageBrush } from 'react-super-canvas/defaults';
 import PropTypes from 'prop-types';
 import {
 	EditableText,
@@ -73,6 +73,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 
 	const availableBrushes = useMemo(() => [
 		new PolygonBrush(),
+		new ImageBrush('/svg/location-pin.svg'),
 	], []);
 
 	const backgroundElement = useMemo(() => new GridBackground(10));
