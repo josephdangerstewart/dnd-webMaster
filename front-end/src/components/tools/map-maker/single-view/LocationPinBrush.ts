@@ -1,15 +1,14 @@
 import IBrush from 'react-super-canvas/dist/src/types/IBrush';
-import { CanvasItemKind } from 'react-super-canvas/dist/src/api/canvas-items/CanvasItemKind';
-import { ImageCanvasItem } from 'react-super-canvas/defaults';
 import IPainterAPI from 'react-super-canvas/dist/src/types/IPainterAPI';
 import { BrushContext } from 'react-super-canvas/dist/src/types/context/BrushContext';
 import ICanvasItem from 'react-super-canvas/dist/src/types/ICanvasItem';
 import Vector2D from 'react-super-canvas/dist/src/types/utility/Vector2D';
+import { LocationPinCanvasItem } from './LocationPinCanvasItem';
 
 export class LocationPinBrush implements IBrush {
 	brushName = 'locationpinbrush'
 	supportedCanvasItems = {
-		[CanvasItemKind.ImageCanvasItem]: ImageCanvasItem,
+		[LocationPinCanvasItem.canvasItemName]: LocationPinCanvasItem,
 	}
 
 	offset = { x: 10, y: 10 };
@@ -30,11 +29,9 @@ export class LocationPinBrush implements IBrush {
 		painter.drawImage(this.topLeftCorner, this.locationPinSource);
 	};
 
-	mouseDown = (addCanvasItem: (canvasItem: ICanvasItem) => void, context: BrushContext) => {
-		addCanvasItem(new ImageCanvasItem({
-			src: this.locationPinSource,
+	mouseDown = (addCanvasItem: (canvasItem: ICanvasItem) => void) => {
+		addCanvasItem(new LocationPinCanvasItem({
 			topLeftCorner: this.topLeftCorner,
-			imageCache: context.imageCache,
 		}));
 	};
 }
