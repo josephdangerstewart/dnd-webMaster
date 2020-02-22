@@ -20,6 +20,9 @@ import Title from '../../../title';
 import { LocationPinBrush } from './LocationPinBrush';
 
 import styles from './styles.less';
+import { CustomToolbarContainer } from '../custom-toolbar/CustomToolbarContainer';
+import { CustomBrushControls } from '../custom-toolbar/CustomBrushControls';
+import { CustomCanvasControls } from '../custom-toolbar/CustomCanvasControls';
 
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
@@ -132,6 +135,11 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 					onChange={onMapDataChange}
 					initialValue={data.map.mapData}
 					ref={superCanvasRef}
+					toolbarComponents={{
+						Toolbar: CustomToolbarContainer,
+						BrushControls: CustomBrushControls,
+						CanvasControls: CustomCanvasControls,
+					}}
 				/>
 			</div>
 		</div>

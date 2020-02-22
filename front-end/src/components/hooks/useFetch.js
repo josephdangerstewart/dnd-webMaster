@@ -94,24 +94,26 @@ export function useGetOnMount(path, onInitialLoad) {
 
 	const loadData = useCallback(() => {
 		setIsLoading(true);
+		console.log('path is', path);
 		return getJson(path)
 			.then(data => {
 				setData(data);
 				setIsLoading(false);
+
+				if (onInitialLoad) {
+					onInitialLoad(data);
+				}
+
 				return data;
 			})
 			.catch((error) => {
 				setError(error);
 				setIsLoading(false);
 			});
-	}, []);
+	}, [ onInitialLoad ]);
 
 	useEffect(() => {
-		const promise = loadData();
-
-		if (onInitialLoad) {
-			promise.then(onInitialLoad);
-		}
+		loadData();
 	}, []);
 
 	return {

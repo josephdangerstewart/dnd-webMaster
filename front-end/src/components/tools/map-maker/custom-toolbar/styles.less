@@ -1,0 +1,17 @@
+@import '../../../../styles/colors.less';
+@import '../../../../styles/mixins.less';
+
+.toolbar-container {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+
+	.card {
+		background-color: @background-color;
+		padding: 8px;
+	}
+}
+
+.button {
+	.with-button-styles(@text-color);
+}

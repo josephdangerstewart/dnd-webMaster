@@ -6,7 +6,8 @@ import Vector2D from 'react-super-canvas/dist/src/types/utility/Vector2D';
 import { LocationPinCanvasItem } from './LocationPinCanvasItem';
 
 export class LocationPinBrush implements IBrush {
-	brushName = 'locationpinbrush'
+	static brushName = 'locationpinbrush';
+	brushName = LocationPinBrush.brushName;
 	supportedCanvasItems = {
 		[LocationPinCanvasItem.canvasItemName]: LocationPinCanvasItem,
 	}
