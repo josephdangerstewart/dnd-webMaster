@@ -23,6 +23,7 @@ import styles from './styles.less';
 import { CustomToolbarContainer } from '../custom-toolbar/CustomToolbarContainer';
 import { CustomBrushControls } from '../custom-toolbar/CustomBrushControls';
 import { CustomCanvasControls } from '../custom-toolbar/CustomCanvasControls';
+import { CustomStyleControls } from '../custom-toolbar/CustomStyleControls';
 
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
@@ -139,6 +140,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 						Toolbar: CustomToolbarContainer,
 						BrushControls: CustomBrushControls,
 						CanvasControls: CustomCanvasControls,
+						StyleControls: CustomStyleControls,
 					}}
 				/>
 			</div>
