@@ -40,7 +40,7 @@ describe('CalculatorInput', () => {
 		// 1) Mount the component
 		const component = mount(
 			<CalculatorInput
-				value={9}
+				defaultValue={9}
 			/>
 		);
 

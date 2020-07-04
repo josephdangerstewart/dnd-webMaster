@@ -62,7 +62,7 @@ export default class HeaderRow extends React.Component {
 				content={
 					<NumericInput
 						onChange={onPropertyChanged(this.mapStatName(stat))}
-						value={stats[stat]}
+						defaultValue={stats[stat]}
 						autoFocus
 					/>
 				}
@@ -149,7 +149,7 @@ export default class HeaderRow extends React.Component {
 						content={
 							<NumericInput
 								onChange={onPropertyChanged('level')}
-								value={level}
+								defaultValue={level}
 								autoFocus
 							/>
 						}
@@ -201,7 +201,7 @@ export default class HeaderRow extends React.Component {
 							<NumericInput
 								onChange={onPropertyChanged('hp')}
 								autoFocus
-								value={hp}
+								defaultValue={hp}
 							/>
 						}
 						modifiers={{ arrow: false }}
@@ -232,7 +232,7 @@ export default class HeaderRow extends React.Component {
 					<Popover
 						content={
 							<NumericInput
-								value={ac}
+								defaultValue={ac}
 								onChange={onPropertyChanged('ac')}
 								autoFocus
 							/>

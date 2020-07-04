@@ -94,7 +94,7 @@ export default class Appearance extends React.Component {
 									<NumericInput 
 										onChange={onPropertyChanged('age')}
 										autoFocus
-										value={age}
+										defaultValue={age}
 									/>
 								}
 								modifiers={{ arrow: false }}
@@ -129,7 +129,7 @@ export default class Appearance extends React.Component {
 								content= {
 									<NumericInput 
 										onChange={onPropertyChanged('weight')}
-										value={weight}
+										defaultValue={weight}
 										autoFocus
 									/>
 								}

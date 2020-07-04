@@ -4,9 +4,11 @@ import {
 	MenuItem,
 } from '@blueprintjs/core';
 import ColorPickerCore from 'coloreact';
-
+import { stringToRgba, rgbaToString } from 'react-super-canvas/color-util';
 import styles from './styles.less';
 import { useCallback } from 'react';
+import CalculatorInput from '../../../../calculator-input';
+import { useColorState } from '../../../../hooks/useColorState';
 
 export function ColorPickerMenuItem({ title, value, setValue }) {
 	const color = value || 'rgba(0, 0, 0, 0)';
@@ -23,6 +25,9 @@ export function ColorPickerMenuItem({ title, value, setValue }) {
 				</div>
 			)}
 			shouldDismissPopover={false}
+			popoverProps={{
+				captureDismiss: true,
+			}}
 		>
 			<ColorPicker
 				color={color}
@@ -63,6 +68,25 @@ function ColorPicker({ color, setColor }) {
 		setPreviewColorCore(value.rgbString);
 	}, []);
 
+	const rgba = stringToRgba(previewColor) || {
+		r: 0,
+		g: 0,
+		b: 0,
+		a: 0,
+	};
+	const setColorViaControls = useCallback((value) => {
+		const colorString = rgbaToString(value);
+		setPreviewColorCore(colorString);
+		setColor(colorString);
+	}, [ setColor ]);
+
+	const {
+		setRedValue,
+		setGreenValue,
+		setBlueValue,
+		setAlphaValue,
+	} = useColorState(rgba, setColorViaControls);
+
 	return (
 		<div>
 			<div className={styles.colorPickerContainer}>
@@ -76,6 +100,26 @@ function ColorPicker({ color, setColor }) {
 				</div>
 			</div>
 			<div className={styles.colorPickerControls}>
+				<ColorPickerInput
+					value={rgba.r}
+					onChange={setRedValue}
+					label="R"
+				/>
+				<ColorPickerInput
+					value={rgba.g}
+					onChange={setGreenValue}
+					label="G"
+				/>
+				<ColorPickerInput
+					value={rgba.b}
+					onChange={setBlueValue}
+					label="B"
+				/>
+				<ColorPickerInput
+					value={rgba.a}
+					onChange={setAlphaValue}
+					label="A"
+				/>
 			</div>
 		</div>
 	);
@@ -84,4 +128,22 @@ function ColorPicker({ color, setColor }) {
 ColorPicker.propTypes = {
 	color: PropTypes.string.isRequired,
 	setColor: PropTypes.func.isRequired,
+};
+
+function ColorPickerInput({ value, label, onChange }) {
+	return (
+		<div className={styles.colorPickerControl}>
+			<span className={styles.colorPickerControlLabel}>{label}: </span>
+			<CalculatorInput
+				value={value}
+				onChange={onChange}
+			/>
+		</div>
+	);
+}
+
+ColorPickerInput.propTypes = {
+	value: PropTypes.string,
+	label: PropTypes.string,
+	onChange: PropTypes.func,
 };

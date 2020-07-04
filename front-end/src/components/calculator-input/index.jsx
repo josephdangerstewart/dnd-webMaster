@@ -11,6 +11,7 @@ import {
 
 export default class CalculatorInput extends React.Component {
 	static propTypes = {
+		defaultValue: PropTypes.number,
 		value: PropTypes.number,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
@@ -22,9 +23,9 @@ export default class CalculatorInput extends React.Component {
 	}
 
 	componentDidMount() {
-		const { value } = this.props;
-		if (typeof value === 'number') {
-			this.setState({ value });
+		const { defaultValue } = this.props;
+		if (typeof defaultValue === 'number') {
+			this.setState({ value: defaultValue });
 		}
 	}
 
@@ -43,7 +44,7 @@ export default class CalculatorInput extends React.Component {
 			});
 		} catch {
 			this.setState({
-				value: this.props.value,
+				value: this.props.defaultValue || 0,
 			});
 		}
 	}
@@ -76,8 +77,8 @@ export default class CalculatorInput extends React.Component {
 	}
 	
 	render() {
-		const { placeholder, autoFocus, ...rest } = this.props;
-		const { value } = this.state;
+		const { placeholder, autoFocus, value: propsValue, ...rest } = this.props;
+		const { value: stateValue } = this.state;
 		return (
 			<NumericInput
 				{...rest}
@@ -85,7 +86,7 @@ export default class CalculatorInput extends React.Component {
 				onBlur={this.onBlur}
 				onKeyDown={this.onKeyDown}
 				placeholder={placeholder}
-				value={value}
+				value={propsValue || stateValue}
 				onValueChange={this.handleInputChange}
 				autoFocus={autoFocus}
 			/>
