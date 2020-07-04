@@ -42,13 +42,17 @@ export function ColorPickerMenuItem({ title, value, setValue }) {
 			<ActionModal
 				open={isModalOpen}
 				onClose={closeModal}
+				onCancel={closeModal}
 				onSubmit={onSubmit}
+				submitButtonText="Save"
 				title={title}
 			>
-				<ColorPicker
-					color={tempColor}
-					setColor={setTempColor}
-				/>
+				<div className={styles.modalContent}>
+					<ColorPicker
+						color={tempColor}
+						setColor={setTempColor}
+					/>
+				</div>
 			</ActionModal>
 		</>
 	);
