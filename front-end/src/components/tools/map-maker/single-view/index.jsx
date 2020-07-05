@@ -24,6 +24,7 @@ import { CustomToolbarContainer } from '../custom-toolbar/CustomToolbarContainer
 import { CustomBrushControls } from '../custom-toolbar/CustomBrushControls';
 import { CustomCanvasControls } from '../custom-toolbar/CustomCanvasControls';
 import { CustomStyleControls } from '../custom-toolbar/CustomStyleControls';
+import { StampBrush } from './StampBrush';
 
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
@@ -79,6 +80,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const availableBrushes = useMemo(() => [
 		new PolygonBrush(),
 		new LocationPinBrush(),
+		new StampBrush('https://res.cloudinary.com/josephdangerstewart/image/upload/v1593902211/campaign-buddy/map-maker/stamps/door-symbol.png'),
 	], []);
 
 	const backgroundElement = useMemo(() => new GridBackground(10));

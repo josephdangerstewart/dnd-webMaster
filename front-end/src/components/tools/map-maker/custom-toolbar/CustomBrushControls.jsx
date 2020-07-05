@@ -6,6 +6,7 @@ import { LocationPinBrush } from '../single-view/LocationPinBrush';
 
 import styles from './styles.less';
 import { constants } from './constants';
+import { StampBrush } from '../single-view/StampBrush';
 
 const brushMap = {
 	[DefaultBrushKind.Selection]: {
@@ -19,6 +20,10 @@ const brushMap = {
 	[LocationPinBrush.brushName]: {
 		icon: 'map-marker',
 		name: 'Location Pin',
+	},
+	[StampBrush.brushName]: {
+		icon: 'cube-add',
+		name: 'Stamp',
 	},
 };
 
