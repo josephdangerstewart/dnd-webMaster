@@ -12,17 +12,13 @@ export class StampBrush implements IBrush {
 		[StampCanvasItem.canvasItemName]: StampCanvasItem,
 	};
 	
-	imageUrl: string;
+	getImageUrl: () => string;
 	offset = { x: 10, y: 10 };
 	topLeftCorner: Vector2D;
 
-	constructor(imageUrl?: string) {
+	constructor(getImageUrl: () => string) {
 		this.topLeftCorner = { x: 0, y: 0 };
-		this.imageUrl = imageUrl;
-	}
-
-	setImageUrl = (imageUrl: string) => {
-		this.imageUrl = imageUrl;
+		this.getImageUrl = getImageUrl;
 	}
 
 	renderPreview = (painter: IPainterAPI, context: BrushContext) => {
@@ -32,17 +28,17 @@ export class StampBrush implements IBrush {
 			y: y - this.offset.y,
 		};
 
-		painter.drawImage(this.topLeftCorner, this.imageUrl);
+		painter.drawImage(this.topLeftCorner, this.getImageUrl());
 	};
 
 	mouseDown = (addCanvasItem: (canvasItem: ICanvasItem) => void, context: BrushContext) => {
-		if (!this.imageUrl) {
+		if (!this.getImageUrl()) {
 			return;
 		}
 
 		addCanvasItem(new StampCanvasItem({
 			topLeftCorner: this.topLeftCorner,
-			imageUrl: this.imageUrl,
+			imageUrl: this.getImageUrl(),
 			imageCache: context.imageCache,
 		}));
 	};

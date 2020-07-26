@@ -29,6 +29,7 @@ import { StampBrush } from './StampBrush';
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
 	const [ isUpdating, setIsUpdating ] = useState(false);
+	const currentStampImage = useRef('https://res.cloudinary.com/josephdangerstewart/image/upload/v1593902211/campaign-buddy/map-maker/stamps/door-symbol.png');
 	const { ref: mapContainerRef, width, height } = useResizeObserver();
 	const post = usePost();
 	const superCanvasRef = useRef(null);
@@ -80,7 +81,7 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const availableBrushes = useMemo(() => [
 		new PolygonBrush(),
 		new LocationPinBrush(),
-		new StampBrush('https://res.cloudinary.com/josephdangerstewart/image/upload/v1593902211/campaign-buddy/map-maker/stamps/door-symbol.png'),
+		new StampBrush(() => currentStampImage.current),
 	], []);
 
 	const backgroundElement = useMemo(() => new GridBackground(10));
