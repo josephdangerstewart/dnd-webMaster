@@ -11,18 +11,7 @@ import styles from './styles.less';
 export function CustomCanvasControls({ clear, currentSelection, deleteSelectedCanvasItems }) {
 	return (
 		<>
-			<Tooltip
-				content="Clear all"
-				hoverOpenDelay={constants.TOOLTIP_DELAY}
-			>
-				<Button
-					icon="cross"
-					onClick={clear}
-					minimal
-					className={styles.button}
-				/>
-			</Tooltip>
-			{currentSelection && currentSelection.selectedItemCount > 0 && (
+			{currentSelection && currentSelection.selectedItemCount > 0 ? (
 				<Tooltip
 					content="Delete current selection"
 					hoverOpenDelay={constants.TOOLTIP_DELAY}
@@ -30,6 +19,18 @@ export function CustomCanvasControls({ clear, currentSelection, deleteSelectedCa
 					<Button
 						icon="trash"
 						onClick={deleteSelectedCanvasItems}
+						minimal
+						className={styles.button}
+					/>
+				</Tooltip>
+			) : (
+				<Tooltip
+					content="Clear all"
+					hoverOpenDelay={constants.TOOLTIP_DELAY}
+				>
+					<Button
+						icon="cross"
+						onClick={clear}
 						minimal
 						className={styles.button}
 					/>
