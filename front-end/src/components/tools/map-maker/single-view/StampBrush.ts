@@ -35,7 +35,7 @@ export class StampBrush implements IBrush {
 		painter.drawImage(this.topLeftCorner, this.imageUrl);
 	};
 
-	mouseDown = (addCanvasItem: (canvasItem: ICanvasItem) => void) => {
+	mouseDown = (addCanvasItem: (canvasItem: ICanvasItem) => void, context: BrushContext) => {
 		if (!this.imageUrl) {
 			return;
 		}
@@ -43,6 +43,7 @@ export class StampBrush implements IBrush {
 		addCanvasItem(new StampCanvasItem({
 			topLeftCorner: this.topLeftCorner,
 			imageUrl: this.imageUrl,
+			imageCache: context.imageCache,
 		}));
 	};
 }
