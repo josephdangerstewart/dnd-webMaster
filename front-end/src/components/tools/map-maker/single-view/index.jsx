@@ -19,6 +19,8 @@ import { useResizeObserver } from '../../../hooks/useResizeObserver';
 import Title from '../../../title';
 import { LocationPinBrush } from './LocationPinBrush';
 
+import { MapContextProvider } from '../use-map-context';
+
 import styles from './styles.less';
 import { CustomToolbarContainer } from '../custom-toolbar/CustomToolbarContainer';
 import { CustomBrushControls } from '../custom-toolbar/CustomBrushControls';
@@ -84,7 +86,13 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 		new StampBrush(() => currentStampImage.current),
 	], []);
 
-	const backgroundElement = useMemo(() => new GridBackground(10));
+	const backgroundElement = useMemo(() => new GridBackground(25));
+
+	const mapContext = useMemo(() => ({
+		setStampImage: (imageSrc) => {
+			currentStampImage.current = imageSrc;
+		},
+	}), []);
 
 	if (isLoading) {
 		return <Spinner />;
@@ -108,46 +116,50 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 	}
 
 	return (
-		<div className={styles.root}>
-			<Title
-				fontSize={25}
-				leftComponent={
-					<Button
-						minimal
-						className={styles.button}
-						icon="arrow-left"
-						onClick={onBack}
+		<MapContextProvider
+			value={mapContext}
+		>
+			<div className={styles.root}>
+				<Title
+					fontSize={25}
+					leftComponent={
+						<Button
+							minimal
+							className={styles.button}
+							icon="arrow-left"
+							onClick={onBack}
+						/>
+					}
+					rightComponent={
+						isUpdating && <Spinner size={20} className={styles.spinner} />
+					}
+					className={styles.title}
+				>
+					<EditableText
+						value={mapName}
+						onChange={onMapNameChange}
+						placeholder="Title..."
 					/>
-				}
-				rightComponent={
-					isUpdating && <Spinner size={20} className={styles.spinner} />
-				}
-				className={styles.title}
-			>
-				<EditableText
-					value={mapName}
-					onChange={onMapNameChange}
-					placeholder="Title..."
-				/>
-			</Title>
-			<div className={styles.mapContainer} ref={mapContainerRef}>
-				<SuperCanvas
-					width={width}
-					activeBackgroundElement={backgroundElement}
-					height={height}
-					availableBrushes={availableBrushes}
-					onChange={onMapDataChange}
-					initialValue={data.map.mapData}
-					ref={superCanvasRef}
-					toolbarComponents={{
-						Toolbar: CustomToolbarContainer,
-						BrushControls: CustomBrushControls,
-						CanvasControls: CustomCanvasControls,
-						StyleControls: CustomStyleControls,
-					}}
-				/>
+				</Title>
+				<div className={styles.mapContainer} ref={mapContainerRef}>
+					<SuperCanvas
+						width={width}
+						activeBackgroundElement={backgroundElement}
+						height={height}
+						availableBrushes={availableBrushes}
+						onChange={onMapDataChange}
+						initialValue={data.map.mapData}
+						ref={superCanvasRef}
+						toolbarComponents={{
+							Toolbar: CustomToolbarContainer,
+							BrushControls: CustomBrushControls,
+							CanvasControls: CustomCanvasControls,
+							StyleControls: CustomStyleControls,
+						}}
+					/>
+				</div>
 			</div>
-		</div>
+		</MapContextProvider>
 	);
 };
 

@@ -4,6 +4,7 @@ import { BrushContext } from 'react-super-canvas/dist/src/types/context/BrushCon
 import ICanvasItem from 'react-super-canvas/dist/src/types/ICanvasItem';
 import Vector2D from 'react-super-canvas/dist/src/types/utility/Vector2D';
 import { StampCanvasItem } from './StampCanvasItem';
+import { vector } from 'react-super-canvas/dist/src/utility/shapes-util';
 
 export class StampBrush implements IBrush {
 	static brushName = 'stampbrush';
@@ -13,7 +14,6 @@ export class StampBrush implements IBrush {
 	};
 	
 	getImageUrl: () => string;
-	offset = { x: 10, y: 10 };
 	topLeftCorner: Vector2D;
 
 	constructor(getImageUrl: () => string) {
@@ -23,10 +23,7 @@ export class StampBrush implements IBrush {
 
 	renderPreview = (painter: IPainterAPI, context: BrushContext) => {
 		const { snappedMousePosition: { x, y } } = context;
-		this.topLeftCorner = {
-			x: x - this.offset.x,
-			y: y - this.offset.y,
-		};
+		this.topLeftCorner = vector(x, y);
 
 		painter.drawImage(this.topLeftCorner, this.getImageUrl());
 	};
