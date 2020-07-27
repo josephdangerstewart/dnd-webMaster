@@ -1,3 +1,37 @@
+@import '../../../../../styles/colors.less';
+@import '../../../../../styles/mixins.less';
+
+.menu-item {
+	color: @text-color !important;
+
+	&.active {
+		background-color: @primary-color !important;
+		color: @background-color !important;
+	}
+}
+
 .image-picker-container {
 	max-width: 400px;
+	max-height: 250px;
+	overflow: auto;
+
+	p {
+		margin-top: 10px;
+		font-style: italic;
+		text-align: center;
+	}
+}
+
+.spinner-container {
+	display: flex;
+	padding: 15px;
+	justify-content: center;
+}
+
+.select-target {
+	display: block;
+}
+
+.button {
+	.with-button-styles(@text-color);
 }

@@ -1,50 +1,29 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ImagePicker } from '../../../../image-picker';
 
-import { Button, Tooltip, Popover, Menu, Classes } from '@blueprintjs/core';
+import { Button, Tooltip, Popover, Menu, Classes, Spinner, MenuItem } from '@blueprintjs/core';
+import { Select } from '@blueprintjs/select';
 import { constants } from '../constants';
 import { StampBrush } from '../../single-view/StampBrush';
 import { useMapContext } from '../../use-map-context';
 
-import styles from '../styles.less';
-import stampBrushStyles from './styles.less';
+import styles from './styles.less';
 import classNames from 'Utility/classNames';
+import { useStampCollection } from './useStampCollection';
+import { useStampCategories } from './useStampCategories';
 
 export function StampBrushControls({
 	activeBrushName,
 	brush,
 	setActiveBrush,
 }) {
-	const { setStampImage } = useMapContext();
 	return (
 		<Popover
 			content={(
 				<Menu>
-					<div className={classNames(stampBrushStyles.imagePickerContainer, Classes.POPOVER_DISMISS)}>
-						<ImagePicker
-							images={[
-								'https://via.placeholder.com/150?text=Image1',
-								'https://via.placeholder.com/150?text=Image2',
-								'https://via.placeholder.com/150?text=Image3',
-								'https://via.placeholder.com/150?text=Image4',
-								'https://via.placeholder.com/150?text=Image5',
-								'https://via.placeholder.com/150?text=Image6',
-								'https://via.placeholder.com/150?text=Image7',
-								'https://via.placeholder.com/150?text=Image8',
-								'https://via.placeholder.com/150?text=Image9',
-								'https://via.placeholder.com/150?text=Image10',
-								'https://via.placeholder.com/150?text=Image11',
-								'https://via.placeholder.com/150?text=Image12',
-								'https://via.placeholder.com/150?text=Image13',
-								'https://via.placeholder.com/150?text=Image14',
-								'https://via.placeholder.com/150?text=Image15',
-								'https://via.placeholder.com/150?text=Image16',
-								'https://via.placeholder.com/150?text=Image17',
-							]}
-							onSelect={setStampImage}
-						/>
-					</div>
+					<StampPicker />
 				</Menu>
 			)}
 			modifiers={{
@@ -77,3 +56,84 @@ StampBrushControls.propTypes = {
 	currentStamp: PropTypes.string,
 	setCurrentStamp: PropTypes.func,
 };
+
+function StampPicker() {
+	const { categories, isLoadingCategories, selectedCategory, setSelectedCategory } = useStampCategories();
+	const { stamps, isLoadingStamps } = useStampCollection(selectedCategory && selectedCategory.value);
+	const { setStampImage } = useMapContext();
+
+	if (isLoadingCategories) {
+		return (
+			<LoadingSpinner />
+		);
+	}
+
+	return (
+		<>
+			<div className={Classes.POPOVER_DISMISS_OVERRIDE}>
+				<Select
+					items={categories}
+					itemRenderer={renderCategory}
+					itemsEqual={areCategoriesEqual}
+					onItemSelect={setSelectedCategory}
+					popoverProps={{
+						modifiers: {
+							arrow: false,
+						},
+						usePortal: false,
+						captureDismiss: true,
+						targetTagName: 'div',
+						targetClassName: styles.selectTarget,
+					}}
+					filterable={false}
+				>
+					<Button
+						text={(selectedCategory && selectedCategory.name) || 'Select a category'}
+						rightIcon="caret-down"
+						minimal
+						fill
+						className={styles.button}
+					/>
+				</Select>
+			</div>
+			<div className={classNames(styles.imagePickerContainer, Classes.POPOVER_DISMISS)}>
+				{isLoadingStamps ? (
+					<LoadingSpinner />
+				) : (!stamps.length || !selectedCategory) ? (
+					<p>Please select a category</p>
+				) : (
+					<ImagePicker
+						images={stamps}
+						onSelect={setStampImage}
+					/>
+				)}
+			</div>
+		</>
+	);
+}
+
+function renderCategory(item, props) {
+	return (
+		<MenuItem
+			text={item.name}
+			onClick={props.handleClick}
+			className={classNames(
+				styles.menuItem,
+				props.modifiers.active && styles.active,
+			)}
+			key={item.value}
+		/>
+	);
+}
+
+function areCategoriesEqual(category1, category2) {
+	return category1.value === category2.value;
+}
+
+function LoadingSpinner() {
+	return (
+		<div className={styles.spinnerContainer}>
+			<Spinner />
+		</div>
+	);
+}
