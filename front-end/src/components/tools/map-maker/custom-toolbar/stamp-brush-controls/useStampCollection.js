@@ -1,13 +1,22 @@
 import { useState } from 'react';
 import { categories } from './categories';
 import { useEffect } from 'react';
+import { useStampCache } from '../../use-stamp-cache';
 
 export function useStampCollection(collectionName) {
+	const { getCachedCollection, cacheCollection } = useStampCache();
 	const [ stamps, setStamps ] = useState([]);
 	const [ isLoadingStamps, setIsLoadingStamps ] = useState(true);
 
 	useEffect(() => {
 		if (!collectionName) {
+			setIsLoadingStamps(false);
+			return;
+		}
+
+		const cachedCollection = getCachedCollection(collectionName);
+		if (cachedCollection) {
+			setStamps(cachedCollection);
 			setIsLoadingStamps(false);
 			return;
 		}
@@ -21,6 +30,7 @@ export function useStampCollection(collectionName) {
 
 			setStamps(value);
 			setIsLoadingStamps(false);
+			cacheCollection(collectionName, value);
 		});
 
 		return () => {

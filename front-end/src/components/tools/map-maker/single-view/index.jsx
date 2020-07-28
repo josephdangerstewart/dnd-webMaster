@@ -20,6 +20,7 @@ import Title from '../../../title';
 import { LocationPinBrush } from './LocationPinBrush';
 
 import { MapContextProvider } from '../use-map-context';
+import { StampCacheProvider } from '../use-stamp-cache';
 
 import styles from './styles.less';
 import { CustomToolbarContainer } from '../custom-toolbar/CustomToolbarContainer';
@@ -119,46 +120,48 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 		<MapContextProvider
 			value={mapContext}
 		>
-			<div className={styles.root}>
-				<Title
-					fontSize={25}
-					leftComponent={
-						<Button
-							minimal
-							className={styles.button}
-							icon="arrow-left"
-							onClick={onBack}
+			<StampCacheProvider>
+				<div className={styles.root}>
+					<Title
+						fontSize={25}
+						leftComponent={
+							<Button
+								minimal
+								className={styles.button}
+								icon="arrow-left"
+								onClick={onBack}
+							/>
+						}
+						rightComponent={
+							isUpdating && <Spinner size={20} className={styles.spinner} />
+						}
+						className={styles.title}
+					>
+						<EditableText
+							value={mapName}
+							onChange={onMapNameChange}
+							placeholder="Title..."
 						/>
-					}
-					rightComponent={
-						isUpdating && <Spinner size={20} className={styles.spinner} />
-					}
-					className={styles.title}
-				>
-					<EditableText
-						value={mapName}
-						onChange={onMapNameChange}
-						placeholder="Title..."
-					/>
-				</Title>
-				<div className={styles.mapContainer} ref={mapContainerRef}>
-					<SuperCanvas
-						width={width}
-						activeBackgroundElement={backgroundElement}
-						height={height}
-						availableBrushes={availableBrushes}
-						onChange={onMapDataChange}
-						initialValue={data.map.mapData}
-						ref={superCanvasRef}
-						toolbarComponents={{
-							Toolbar: CustomToolbarContainer,
-							BrushControls: CustomBrushControls,
-							CanvasControls: CustomCanvasControls,
-							StyleControls: CustomStyleControls,
-						}}
-					/>
+					</Title>
+					<div className={styles.mapContainer} ref={mapContainerRef}>
+						<SuperCanvas
+							width={width}
+							activeBackgroundElement={backgroundElement}
+							height={height}
+							availableBrushes={availableBrushes}
+							onChange={onMapDataChange}
+							initialValue={data.map.mapData}
+							ref={superCanvasRef}
+							toolbarComponents={{
+								Toolbar: CustomToolbarContainer,
+								BrushControls: CustomBrushControls,
+								CanvasControls: CustomCanvasControls,
+								StyleControls: CustomStyleControls,
+							}}
+						/>
+					</div>
 				</div>
-			</div>
+			</StampCacheProvider>
 		</MapContextProvider>
 	);
 };
