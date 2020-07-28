@@ -8,6 +8,7 @@ import {
 	NonIdealState,
 	Button,
 	Intent,
+	Card,
 } from '@blueprintjs/core';
 import {
 	useGetOnMount,
@@ -28,9 +29,11 @@ import { CustomBrushControls } from '../custom-toolbar/CustomBrushControls';
 import { CustomCanvasControls } from '../custom-toolbar/CustomCanvasControls';
 import { CustomStyleControls } from '../custom-toolbar/CustomStyleControls';
 import { StampBrush } from './StampBrush';
+import classNames from 'Utility/classNames';
 
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
+	const [ isMaximized, setIsMaximized ] = useState(false);
 	const [ isUpdating, setIsUpdating ] = useState(false);
 	const currentStampImage = useRef('https://res.cloudinary.com/josephdangerstewart/image/upload/v1593902211/campaign-buddy/map-maker/stamps/door-symbol.png');
 	const { ref: mapContainerRef, width, height } = useResizeObserver();
@@ -122,27 +125,51 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 		>
 			<StampCacheProvider>
 				<div className={styles.root}>
-					<Title
-						fontSize={25}
-						leftComponent={
-							<Button
-								minimal
-								className={styles.button}
-								icon="arrow-left"
-								onClick={onBack}
+					{!isMaximized ? (
+						<Title
+							fontSize={25}
+							leftComponent={
+								<Button
+									minimal
+									className={styles.button}
+									icon="arrow-left"
+									onClick={onBack}
+								/>
+							}
+							rightComponent={
+								<>
+									<Button
+										minimal
+										className={classNames(
+											styles.button,
+											styles.maximizeButton,
+										)}
+										icon="maximize"
+										onClick={() => setIsMaximized(true)}
+									/>
+									{isUpdating && <Spinner size={20} className={styles.spinner} />}
+								</>
+							}
+							className={styles.title}
+						>
+							<EditableText
+								value={mapName}
+								onChange={onMapNameChange}
+								placeholder="Title..."
 							/>
-						}
-						rightComponent={
-							isUpdating && <Spinner size={20} className={styles.spinner} />
-						}
-						className={styles.title}
-					>
-						<EditableText
-							value={mapName}
-							onChange={onMapNameChange}
-							placeholder="Title..."
-						/>
-					</Title>
+						</Title>
+					) : (
+						<div className={styles.minimizeContainer}>
+							<Card className={styles.card} elevation={3}>
+								<Button
+									minimal
+									className={styles.button}
+									icon="minimize"
+									onClick={() => setIsMaximized(false)}
+								/>
+							</Card>
+						</div>
+					)}
 					<div className={styles.mapContainer} ref={mapContainerRef}>
 						<SuperCanvas
 							width={width}
