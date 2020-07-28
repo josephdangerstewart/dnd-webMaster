@@ -2,6 +2,7 @@ export const categories = {
 	dungeonNotation: {
 		name: 'Dungeon notation',
 		stamps: [
+			'https://res.cloudinary.com/josephdangerstewart/image/upload/v1593902211/campaign-buddy/map-maker/stamps/door-symbol.png',
 			'https://via.placeholder.com/150?text=NormalDoor',
 			'https://via.placeholder.com/150?text=TrapDoor',
 			'https://via.placeholder.com/150?text=TreasureChest',
