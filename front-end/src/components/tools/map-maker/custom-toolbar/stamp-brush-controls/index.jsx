@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ImagePicker } from '../../../../image-picker';
 
@@ -62,6 +62,12 @@ function StampPicker() {
 	const { stamps, isLoadingStamps } = useStampCollection(selectedCategory && selectedCategory.value);
 	const { setStampImage } = useMapContext();
 
+	const [ activeItem, setActiveItem ] = useState(selectedCategory);
+
+	const onActiveItemChange = useCallback((activeItem) => {
+		setActiveItem(activeItem);
+	}, [ setActiveItem ]);
+
 	if (isLoadingCategories) {
 		return (
 			<LoadingSpinner />
@@ -86,6 +92,8 @@ function StampPicker() {
 						targetClassName: styles.selectTarget,
 					}}
 					filterable={false}
+					activeItem={activeItem}
+					onActiveItemChange={onActiveItemChange}
 				>
 					<Button
 						text={(selectedCategory && selectedCategory.name) || 'Select a category'}

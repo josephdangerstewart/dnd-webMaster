@@ -10,6 +10,8 @@ export function useStampCache() {
 
 export function StampCacheProvider({ children }) {
 	const stampCache = useRef({});
+	const categories = useRef();
+	const selectedCategory = useRef();
 
 	const cacheCollection = useCallback((category, stamps) => {
 		stampCache.current[category] = stamps;
@@ -17,10 +19,31 @@ export function StampCacheProvider({ children }) {
 
 	const getCachedCollection = useCallback((category) => stampCache.current[category], []);
 
+	const getCachedCategories = useCallback(() => categories.current, []);
+	const cacheCategories = useCallback((value) => {
+		categories.current = value;
+	}, []);
+
+	const getCachedSelectedCategory = useCallback(() => selectedCategory.current, []);
+	const cacheSelectedCategory = useCallback((value) => {
+		selectedCategory.current = value;
+	}, []);
+
 	const value = useMemo(() => ({
 		getCachedCollection,
 		cacheCollection,
-	}));
+		getCachedCategories,
+		cacheCategories,
+		getCachedSelectedCategory,
+		cacheSelectedCategory,
+	}), [
+		getCachedCollection,
+		cacheCollection,
+		getCachedCategories,
+		cacheCategories,
+		getCachedSelectedCategory,
+		cacheSelectedCategory,
+	]);
 
 	return (
 		<Provider value={value}>

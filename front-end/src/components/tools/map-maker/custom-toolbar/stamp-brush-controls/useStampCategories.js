@@ -1,12 +1,28 @@
 import { categories } from './categories';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useStampCache } from '../../use-stamp-cache';
 
 export function useStampCategories() {
-	const [ categories, setCategories ] = useState();
-	const [ selectedCategory, setSelectedCategory ] = useState();
+	const {
+		getCachedCategories,
+		cacheCategories,
+		getCachedSelectedCategory,
+		cacheSelectedCategory,
+	} = useStampCache();
+
+	const cachedCategories = getCachedCategories();
+	const cachedSelectedCategory = getCachedSelectedCategory();
+
+	const [ categories, setCategories ] = useState(cachedCategories);
+	const [ selectedCategory, setSelectedCategory ] = useState(cachedSelectedCategory || null);
 	const [ isLoadingCategories, setIsLoadingCategories ] = useState(true);
 
 	useEffect(() => {
+		if (cachedCategories) {
+			setIsLoadingCategories(false);
+			return;
+		}
+
 		let isCancelled = false;
 		getStampCategories().then((value) => {
 			if (isCancelled) {
@@ -15,18 +31,24 @@ export function useStampCategories() {
 
 			setCategories(value);
 			setIsLoadingCategories(false);
+			cacheCategories(value);
 		});
 
 		return () => {
 			isCancelled = true;
 		};
-	}, []);
+	}, [ cachedCategories, cacheCategories ]);
+
+	const wrappedSetSelectedCategory = useCallback((value) => {
+		cacheSelectedCategory(value);
+		setSelectedCategory(value);
+	}, [ cacheSelectedCategory, setSelectedCategory ]);
 
 	return {
 		categories,
 		isLoadingCategories,
 		selectedCategory,
-		setSelectedCategory,
+		setSelectedCategory: wrappedSetSelectedCategory,
 	};
 }
 
