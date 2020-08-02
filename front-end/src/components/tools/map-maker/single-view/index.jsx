@@ -31,6 +31,7 @@ import { CustomCanvasControls } from '../custom-toolbar/CustomCanvasControls';
 import { CustomStyleControls } from '../custom-toolbar/CustomStyleControls';
 import { StampBrush } from './StampBrush';
 import classNames from 'Utility/classNames';
+import { PatternCacheProvider } from '../use-pattern-cache';
 
 export const SingleView = ({ campaignID, mapID, onBack }) => {
 	const [ mapName, setMapName ] = useState('');
@@ -216,9 +217,11 @@ function ContextProvider({
 	return (
 		<MapContextProvider value={mapContext}>
 			<StampCacheProvider>
-				<SuperCanvasProvider value={superCanvas}>
-					{children}
-				</SuperCanvasProvider>
+				<PatternCacheProvider>
+					<SuperCanvasProvider value={superCanvas}>
+						{children}
+					</SuperCanvasProvider>
+				</PatternCacheProvider>
 			</StampCacheProvider>
 		</MapContextProvider>
 	);

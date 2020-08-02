@@ -1,0 +1,19 @@
+@import '../../styles/mixins.less';
+@import '../../styles/colors.less';
+
+.button {
+	.with-button-styles(@text-color);
+}
+
+.menu-item {
+	color: @text-color !important;
+
+	&.active {
+		background-color: @primary-color !important;
+		color: @background-color !important;
+
+		&:hover {
+			background-color: @primary-color !important;
+		}
+	}
+}

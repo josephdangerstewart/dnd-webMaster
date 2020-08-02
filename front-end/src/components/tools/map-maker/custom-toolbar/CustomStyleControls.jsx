@@ -11,8 +11,8 @@ import styles from './styles.less';
 import { useCallback } from 'react';
 
 export function CustomStyleControls({ styleContext, setStyleContext }) {
-	const setFillColor = useCallback((value) => {
-		setStyleContext({ fillColor: value });
+	const setFillColor = useCallback((fillColor, fillImageUrl) => {
+		setStyleContext({ fillColor, fillImageUrl });
 	}, [ setStyleContext ]);
 
 	const setStrokeColor = useCallback((value) => {
@@ -25,10 +25,12 @@ export function CustomStyleControls({ styleContext, setStyleContext }) {
 				content={(
 					<Menu>
 						<ColorPickerMenuItem
-							title="Fill Color"
+							title="Fill"
 							value={styleContext.fillColor}
+							mediaValue={styleContext.fillImageUrl}
 							setValue={setFillColor}
 							canClear
+							hasMedia
 						/>
 						<ColorPickerMenuItem
 							title="Stroke Color"

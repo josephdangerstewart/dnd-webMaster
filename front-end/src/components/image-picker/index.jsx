@@ -7,21 +7,20 @@ import styles from './styles.less';
 export function ImagePicker({
 	images,
 	onSelect,
+	selectedImage,
 }) {
 	return (
 		<div className={styles.root}>
 			{images.map((src) => (
-				<Button
-					minimal
-					key={src}
-					onClick={() => onSelect(src)}
-				>
-					<div
-						className={styles.imageContainer}
+				<div key={src} className={styles.imageContainer}>
+					<Button
+						minimal
+						onClick={() => onSelect(src)}
+						active={src === selectedImage}
 					>
 						<img src={src} />
-					</div>
-				</Button>
+					</Button>
+				</div>
 			))}
 		</div>
 	);
@@ -30,4 +29,5 @@ export function ImagePicker({
 ImagePicker.propTypes = {
 	images: PropTypes.arrayOf(PropTypes.string).isRequired,
 	onSelect: PropTypes.func.isRequired,
+	selectedImage: PropTypes.string,
 };

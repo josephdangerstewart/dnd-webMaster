@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { ImagePicker } from '../../../../image-picker';
 
-import { Button, Tooltip, Popover, Menu, Classes, Spinner, MenuItem } from '@blueprintjs/core';
-import { Select } from '@blueprintjs/select';
+import { Button, Tooltip, Popover, Menu, Classes, Spinner } from '@blueprintjs/core';
 import { constants } from '../constants';
 import { StampBrush } from '../../single-view/StampBrush';
 import { useMapContext } from '../../use-map-context';
@@ -13,6 +12,7 @@ import styles from './styles.less';
 import classNames from 'Utility/classNames';
 import { useStampCollection } from './useStampCollection';
 import { useStampCategories } from './useStampCategories';
+import { BasicSelect } from '../../../../basic-select';
 
 export function StampBrushControls({
 	activeBrushName,
@@ -62,12 +62,6 @@ function StampPicker() {
 	const { stamps, isLoadingStamps } = useStampCollection(selectedCategory && selectedCategory.value);
 	const { setStampImage } = useMapContext();
 
-	const [ activeItem, setActiveItem ] = useState(selectedCategory);
-
-	const onActiveItemChange = useCallback((activeItem) => {
-		setActiveItem(activeItem);
-	}, [ setActiveItem ]);
-
 	if (isLoadingCategories) {
 		return (
 			<LoadingSpinner />
@@ -77,32 +71,14 @@ function StampPicker() {
 	return (
 		<>
 			<div className={Classes.POPOVER_DISMISS_OVERRIDE}>
-				<Select
+				<BasicSelect
 					items={categories}
-					itemRenderer={renderCategory}
-					itemsEqual={areCategoriesEqual}
-					onItemSelect={setSelectedCategory}
-					popoverProps={{
-						modifiers: {
-							arrow: false,
-						},
-						usePortal: false,
-						captureDismiss: true,
-						targetTagName: 'div',
-						targetClassName: styles.selectTarget,
-					}}
-					filterable={false}
-					activeItem={activeItem}
-					onActiveItemChange={onActiveItemChange}
-				>
-					<Button
-						text={(selectedCategory && selectedCategory.name) || 'Select a category'}
-						rightIcon="caret-down"
-						minimal
-						fill
-						className={styles.button}
-					/>
-				</Select>
+					onChange={setSelectedCategory}
+					getDisplay={(item) => item.name}
+					getKey={(item) => item.value}
+					value={selectedCategory}
+					noItemsText="Select a category"
+				/>
 			</div>
 			<div className={classNames(styles.imagePickerContainer, Classes.POPOVER_DISMISS)}>
 				{isLoadingStamps ? (
@@ -118,24 +94,6 @@ function StampPicker() {
 			</div>
 		</>
 	);
-}
-
-function renderCategory(item, props) {
-	return (
-		<MenuItem
-			text={item.name}
-			onClick={props.handleClick}
-			className={classNames(
-				styles.menuItem,
-				props.modifiers.active && styles.active,
-			)}
-			key={item.value}
-		/>
-	);
-}
-
-function areCategoriesEqual(category1, category2) {
-	return category1.value === category2.value;
 }
 
 function LoadingSpinner() {
