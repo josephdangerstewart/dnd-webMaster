@@ -22,6 +22,7 @@ import { LocationPinBrush } from './LocationPinBrush';
 
 import { MapContextProvider } from '../use-map-context';
 import { StampCacheProvider } from '../use-stamp-cache';
+import { SuperCanvasProvider } from '../use-super-canvas';
 
 import styles from './styles.less';
 import { CustomToolbarContainer } from '../custom-toolbar/CustomToolbarContainer';
@@ -98,6 +99,15 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 		},
 	}), []);
 
+	const superCanvasHandles = useMemo(() => ({
+		moveForward: () => superCanvasRef.current.moveForward(),
+		moveBackward: () => superCanvasRef.current.moveBackward(),
+		moveToBack: () => superCanvasRef.current.moveToBack(),
+		moveToFront: () => superCanvasRef.current.moveToFront(),
+		lockCurrentSelection: () => superCanvasRef.current.lockCurrentSelection(),
+		unlockCurrentSelection: () => superCanvasRef.current.unlockCurrentSelection(),
+	}), []);
+
 	if (isLoading) {
 		return <Spinner />;
 	}
@@ -120,23 +130,23 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 	}
 
 	return (
-		<MapContextProvider
-			value={mapContext}
+		<ContextProvider
+			mapContext={mapContext}
+			superCanvas={superCanvasHandles}
 		>
-			<StampCacheProvider>
-				<div className={styles.root}>
-					{!isMaximized ? (
-						<Title
-							fontSize={25}
-							leftComponent={
-								<Button
-									minimal
-									className={styles.button}
-									icon="arrow-left"
-									onClick={onBack}
-								/>
-							}
-							rightComponent={
+			<div className={styles.root}>
+				{!isMaximized ? (
+					<Title
+						fontSize={25}
+						leftComponent={
+							<Button
+								minimal
+								className={styles.button}
+								icon="arrow-left"
+								onClick={onBack}
+							/>
+						}
+						rightComponent={
 								<>
 									<Button
 										minimal
@@ -149,47 +159,46 @@ export const SingleView = ({ campaignID, mapID, onBack }) => {
 									/>
 									{isUpdating && <Spinner size={20} className={styles.spinner} />}
 								</>
-							}
-							className={styles.title}
-						>
-							<EditableText
-								value={mapName}
-								onChange={onMapNameChange}
-								placeholder="Title..."
-							/>
-						</Title>
-					) : (
-						<div className={styles.minimizeContainer}>
-							<Card className={styles.card} elevation={3}>
-								<Button
-									minimal
-									className={styles.button}
-									icon="minimize"
-									onClick={() => setIsMaximized(false)}
-								/>
-							</Card>
-						</div>
-					)}
-					<div className={styles.mapContainer} ref={mapContainerRef}>
-						<SuperCanvas
-							width={width}
-							activeBackgroundElement={backgroundElement}
-							height={height}
-							availableBrushes={availableBrushes}
-							onChange={onMapDataChange}
-							initialValue={data.map.mapData}
-							ref={superCanvasRef}
-							toolbarComponents={{
-								Toolbar: CustomToolbarContainer,
-								BrushControls: CustomBrushControls,
-								CanvasControls: CustomCanvasControls,
-								StyleControls: CustomStyleControls,
-							}}
+						}
+						className={styles.title}
+					>
+						<EditableText
+							value={mapName}
+							onChange={onMapNameChange}
+							placeholder="Title..."
 						/>
+					</Title>
+				) : (
+					<div className={styles.minimizeContainer}>
+						<Card className={styles.card} elevation={3}>
+							<Button
+								minimal
+								className={styles.button}
+								icon="minimize"
+								onClick={() => setIsMaximized(false)}
+							/>
+						</Card>
 					</div>
+				)}
+				<div className={styles.mapContainer} ref={mapContainerRef}>
+					<SuperCanvas
+						width={width}
+						activeBackgroundElement={backgroundElement}
+						height={height}
+						availableBrushes={availableBrushes}
+						onChange={onMapDataChange}
+						initialValue={data.map.mapData}
+						ref={superCanvasRef}
+						toolbarComponents={{
+							Toolbar: CustomToolbarContainer,
+							BrushControls: CustomBrushControls,
+							CanvasControls: CustomCanvasControls,
+							StyleControls: CustomStyleControls,
+						}}
+					/>
 				</div>
-			</StampCacheProvider>
-		</MapContextProvider>
+			</div>
+		</ContextProvider>
 	);
 };
 
@@ -197,4 +206,26 @@ SingleView.propTypes = {
 	campaignID: PropTypes.string,
 	mapID: PropTypes.string,
 	onBack: PropTypes.func,
+};
+
+function ContextProvider({
+	mapContext,
+	superCanvas,
+	children,
+}) {
+	return (
+		<MapContextProvider value={mapContext}>
+			<StampCacheProvider>
+				<SuperCanvasProvider value={superCanvas}>
+					{children}
+				</SuperCanvasProvider>
+			</StampCacheProvider>
+		</MapContextProvider>
+	);
+}
+
+ContextProvider.propTypes = {
+	mapContext: PropTypes.object,
+	superCanvas: PropTypes.object,
+	children: PropTypes.node,
 };
